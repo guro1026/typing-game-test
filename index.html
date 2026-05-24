@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Typing Training</title>
 
-  <!-- CSS（責務ごとに分割） -->
+  <!-- CSS -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/screens.css">
   <link rel="stylesheet" href="css/ui.css">
@@ -15,9 +15,7 @@
 
 <body class="male-ui">
 
-  <!-- ============================
-       タイトル画面
-  ============================ -->
+  <!-- タイトル画面 -->
   <div id="title-screen">
     <h1>タイピング修行</h1>
 
@@ -38,29 +36,21 @@
     </div>
   </div>
 
-  <!-- ============================
-       ゲーム画面
-  ============================ -->
+  <!-- ゲーム画面 -->
   <div id="game-screen">
 
-    <!-- HUD -->
     <div id="hud">
       <span>Score: <span id="hud-score">0</span></span>
       <span>Combo: <span id="hud-combo">0</span></span>
       <span>Time: <span id="hud-time">60</span></span>
     </div>
 
-    <!-- 単語表示 -->
     <div id="word-jp"></div>
     <div id="word-romaji"></div>
 
-    <!-- 気弾 -->
     <div id="ki-ball" class="blue"></div>
-
-    <!-- ビーム -->
     <div id="beam"></div>
 
-    <!-- キーボード -->
     <div class="keyboard">
       <div class="key-row">
         <span class="key">Q</span><span class="key">W</span><span class="key">E</span>
@@ -84,9 +74,7 @@
     </div>
   </div>
 
-  <!-- ============================
-       JS（6ファイル構成）
-  ============================ -->
+  <!-- JS -->
   <script type="module" src="js/main.js"></script>
 
 </body>
