@@ -1,7 +1,7 @@
 // ui.js
 export const ui = {
   showTitle() {
-    document.getElementById("title-screen").style.display = "block";
+    document.getElementById("title-screen").style.display = "flex";
     document.getElementById("game-screen").style.display = "none";
   },
 

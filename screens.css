@@ -1,8 +1,7 @@
 /* screens.css */
 
 #title-screen,
-#game-screen,
-#result-screen {
+#game-screen {
   width: 100vw;
   height: 100vh;
   position: absolute;
@@ -18,9 +17,5 @@
 }
 
 #game-screen {
-  display: none;
-}
-
-#result-screen {
   display: none;
 }
