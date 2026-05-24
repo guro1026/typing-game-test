@@ -1,4 +1,4 @@
-// ui.js
+// js/ui.js
 export const ui = {
   showTitle() {
     document.getElementById("title-screen").style.display = "flex";

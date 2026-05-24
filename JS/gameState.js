@@ -1,4 +1,4 @@
-// gameState.js
+// js/gameState.js
 export const gameState = {
   state: "title",
   score: 0,

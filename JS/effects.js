@@ -1,4 +1,4 @@
-// effects.js
+// js/effects.js
 export const effects = {
   kiPower: 0,
 

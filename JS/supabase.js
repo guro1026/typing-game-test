@@ -1,4 +1,4 @@
-// supabase.js
+// js/supabase.js
 export const supa = {
   url: "https://bznzxcllyocfairwjzzk.supabase.co",
   key: "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e",

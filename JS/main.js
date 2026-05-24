@@ -120,7 +120,7 @@ function startTimer() {
 }
 
 function loadCSV(course) {
-  fetch(`words_${course}.csv`)
+  fetch(`csv/words_${course}.csv`)
     .then(res => res.text())
     .then(text => {
       const lines = text.trim().split("\n");
@@ -132,6 +132,7 @@ function loadCSV(course) {
       console.error("CSV 読み込み失敗:", err);
     });
 }
+
 
 function endGame() {
   gameState.state = "end";

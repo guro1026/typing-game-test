@@ -1,0 +1,63 @@
+/* keyboard.css */
+
+/* ============================
+   基本キーボードレイアウト
+============================ */
+.keyboard {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.key-row {
+  margin: 5px 0;
+}
+
+.key {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin: 3px;
+  border-radius: 6px;
+  background: #333;       /* ← デフォルト（上書きされる） */
+  color: #fff;
+  line-height: 40px;
+  font-size: 20px;
+  transition: 0.1s;
+}
+
+.key.active {
+  background: #ffcc00;    /* ← デフォルト（上書きされる） */
+  color: #000;
+}
+
+
+/* ============================
+   男性UI（ブルー系）
+============================ */
+body.male-ui .key {
+  background: #003366;     /* 濃いブルー */
+  color: #ffffff;
+  border: 1px solid #005599;
+}
+
+body.male-ui .key.active {
+  background: #66ccff;     /* 水色に光る */
+  color: #000;
+}
+
+
+/* ============================
+   女性UI（白＋ピンク系）
+============================ */
+body.female-ui .key {
+  background: #ffe6f2;     /* 白ピンク */
+  color: #d63384;          /* ピンク文字 */
+  border: 1px solid #ff99cc;
+}
+
+body.female-ui .key.active {
+  background: #ff99cc;     /* 濃いピンクに光る */
+  color: #fff;
+}

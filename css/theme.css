@@ -1,0 +1,15 @@
+/* theme.css */
+
+/* 男性UI（デフォルト） */
+body.male-ui {
+  --bg-color: #000;
+  --text-color: #fff;
+  --accent-color: #00aaff;
+}
+
+/* 女性UI */
+body.female-ui {
+  --bg-color: #fff0f6;
+  --text-color: #d63384;
+  --accent-color: #ff77c8;
+}

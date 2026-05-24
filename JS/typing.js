@@ -1,4 +1,4 @@
-// typing.js
+// js/typing.js
 import { gameState } from "./gameState.js";
 import { ui } from "./ui.js";
 import { audio } from "./audio.js";
@@ -58,6 +58,7 @@ export const typing = {
   },
 
   nextWord() {
+    if (!gameState.words.length) return;
     const line = gameState.words[Math.floor(Math.random() * gameState.words.length)];
     const cols = line.split(",");
 
