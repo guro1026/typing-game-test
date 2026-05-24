@@ -1,20 +1,40 @@
-// ui.js
+// ============================
+// ui.js（UIテーマ切り替え）
+// ============================
 
-export const ui = {
-  updateHUD(state) {
-    document.getElementById("hud-time").textContent = state.timeLeft;
-    document.getElementById("hud-score").textContent = state.score;
-    document.getElementById("hud-combo").textContent = state.combo;
-  },
+// ----------------------------
+// UIテーマ適用
+// ----------------------------
+export function applyUITheme(theme) {
+  document.body.classList.remove("male-ui", "female-ui");
 
-  showWord(jp, romaji, index) {
-    const jpEl = document.getElementById("word-jp");
-    const romajiEl = document.getElementById("word-romaji");
-
-    jpEl.textContent = jp;
-
-    const done = romaji.slice(0, index);
-    const rest = romaji.slice(index);
-    romajiEl.innerHTML = `<span style="color:#fff;">${done}</span><span style="color:#aee7ff;">${rest}</span>`;
+  if (theme === "female") {
+    document.body.classList.add("female-ui");
+  } else {
+    document.body.classList.add("male-ui");
   }
-};
+
+  localStorage.setItem("uiTheme", theme);
+}
+
+// ----------------------------
+// 名前から性別推定（必要なら）
+// ----------------------------
+export function detectGenderFromName(name) {
+  // 必要なら後でロジック追加
+  // 今はデフォルトで male にする
+  return "male";
+}
+
+// ----------------------------
+// 初期ロード時にテーマ適用
+// ----------------------------
+export function initUITheme() {
+  const saved = localStorage.getItem("uiTheme");
+
+  if (saved) {
+    applyUITheme(saved);
+  } else {
+    applyUITheme("male");
+  }
+}

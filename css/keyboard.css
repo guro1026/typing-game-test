@@ -1,25 +1,36 @@
-/* keyboard.css */
-
-/* デフォルト（青系） */
-.key {
-  border: 2px solid #4cf;
-  background: rgba(0, 80, 255, 0.4);
-  color: white;
+/* ============================
+   キーボード（最前面）
+============================ */
+#keyboard {
+  position: absolute;
+  top: 74%;
+  width: 100%;
+  text-align: center;
+  transform: scale(2, 1);        /* 横に広げる */
+  transform-origin: center center;
+  z-index: 10000;                /* UI は最前面 */
 }
 
+/* 行ごとの余白 */
+.key-row {
+  margin: 6px 0;
+}
+
+/* キーの見た目 */
+.key {
+  display: inline-block;
+  min-width: 48px;
+  padding: 10px 6px;
+  margin: 2px;
+  border: 2px solid #4cf;
+  border-radius: 6px;
+  background: rgba(0, 80, 255, 0.4);
+  font-size: 20px;
+  text-shadow: 0 0 6px #000;
+}
+
+/* 押下時の光 */
 .key.active {
   background: #4cf;
   box-shadow: 0 0 20px #4cf;
-}
-
-/* 女性UI（ピンク系） */
-body.female-ui .key {
-  border-color: #ff99cc;
-  background: rgba(255, 150, 200, 0.4);
-  color: #ffe6f2;
-}
-
-body.female-ui .key.active {
-  background: #ff99cc;
-  box-shadow: 0 0 20px #ff99cc;
 }

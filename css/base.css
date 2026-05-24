@@ -1,11 +1,19 @@
-/* base.css */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ============================
+   基本設定（全画面共通）
+============================ */
+body {
+  margin: 0;                 /* ページの余白なし */
+  overflow: hidden;          /* スクロール禁止（ゲーム用） */
+  background: black;         /* 全画面の背景色 */
+  font-family: "Yu Gothic", sans-serif;
 }
 
-body {
-  overflow: hidden;
-  font-family: "Yu Gothic", sans-serif;
+/* ============================
+   タイトルロゴの光アニメ（共通）
+   ※ タイトルとゲームで共通使用
+============================ */
+@keyframes glow {
+  0%   { filter: drop-shadow(0 0 8px #4cf); }
+  50%  { filter: drop-shadow(0 0 32px #9ff); }
+  100% { filter: drop-shadow(0 0 8px #4cf); }
 }

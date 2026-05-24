@@ -1,90 +1,120 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>Typing Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>修行タイピング</title>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/keyboard.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <!-- ============================
+       CSS（読み込み順が重要）
+  ============================ -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/title.css" />
+  <link rel="stylesheet" href="css/game.css" />
+  <link rel="stylesheet" href="css/keyboard.css" />
+  <link rel="stylesheet" href="css/effects.css" />
+  <link rel="stylesheet" href="css/screens.css" />
+  <link rel="stylesheet" href="css/ui.css" />
 </head>
 
-<body class="male-ui">
+<body>
 
-  <!-- タイトル画面 -->
+  <!-- ============================
+       タイトル画面
+  ============================ -->
   <div id="title-screen">
 
+    <!-- 背景キラキラ -->
     <div id="bg-layer"></div>
 
-    <img id="title-girl" src="images/character_Woman.png">
-    <img id="title-boy" src="images/character_men.png">
+    <!-- キャラ -->
+    <img id="title-girl" src="images/girl.png" alt="">
+    <img id="title-boy" src="images/boy.png" alt="">
 
-    <img id="title-main" src="images/title_main.png">
+    <!-- タイトルロゴ -->
+    <img id="title-main" src="images/title_logo.png" alt="">
 
-    <div id="title-subtext">タイピングで気を高めろ！</div>
+    <!-- サブタイトル -->
+    <div id="title-subtext">修行タイピング</div>
 
+    <!-- 名前入力 -->
     <div id="name-area">
       <div id="name-error"></div>
-      <input id="name-input" placeholder="姓　名（全角スペース）">
+      <input id="name-input" type="text" placeholder="姓　名（全角スペース）" />
       <button id="name-submit">決定</button>
     </div>
 
+    <!-- コース選択 -->
     <div id="course-buttons" style="display:none;">
-      <button class="course-btn" data-course="easy">EASY</button>
-      <button class="course-btn" data-course="business">BUSINESS</button>
-      <button class="course-btn" data-course="it">IT</button>
-      <button class="course-btn" data-course="mail">MAIL</button>
+      <button class="course-btn" data-course="easy">初級</button>
+      <button class="course-btn" data-course="normal">中級</button>
+      <button class="course-btn" data-course="hard">上級</button>
     </div>
 
+    <!-- 音量 -->
     <div id="volume-area">
-      <div id="volume-label">BGM</div>
+      BGM 音量<br>
       <input id="volume-slider" type="range" min="0" max="100" value="0">
     </div>
 
   </div>
 
-  <!-- ゲーム画面 -->
-  <div id="game-screen">
+  <!-- ============================
+       ゲーム画面
+  ============================ -->
+  <div id="game-screen" style="display:none;">
 
+    <!-- お題 -->
     <div id="word-jp"></div>
     <div id="word-romaji"></div>
 
+    <!-- キャラ＋気弾 -->
     <div id="fighter">
-      <img id="character" src="images/character_men_kiball.png">
-      <img id="ki-ball" src="images/kiball_blue.png" class="blue">
+      <img id="character" src="images/character.png" alt="">
+      <img id="ki-ball" src="images/ki_ball.png" alt="">
     </div>
 
+    <!-- ビーム -->
     <div id="beam"></div>
 
+    <!-- HUD -->
     <div id="hud">
-      <div class="hud-item">TIME: <span id="hud-time">60</span></div>
-      <div class="hud-item">SCORE: <span id="hud-score">0</span></div>
-      <div class="hud-item">COMBO: <span id="hud-combo">0</span></div>
+      <div class="hud-item">スコア：<span id="hud-score">0</span></div>
+      <div class="hud-item">コンボ：<span id="hud-combo">0</span></div>
+      <div class="hud-item">残り：<span id="hud-time">60</span></div>
     </div>
 
+    <!-- キーボード -->
     <div id="keyboard">
       <div class="key-row">
-        <div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div><div class="key">T</div><div class="key">Y</div><div class="key">U</div><div class="key">I</div><div class="key">O</div><div class="key">P</div>
+        <span class="key">Q</span><span class="key">W</span><span class="key">E</span><span class="key">R</span><span class="key">T</span><span class="key">Y</span><span class="key">U</span><span class="key">I</span><span class="key">O</span><span class="key">P</span>
       </div>
       <div class="key-row">
-        <div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key">F</div><div class="key">G</div><div class="key">H</div><div class="key">J</div><div class="key">K</div><div class="key">L</div>
+        <span class="key">A</span><span class="key">S</span><span class="key">D</span><span class="key">F</span><span class="key">G</span><span class="key">H</span><span class="key">J</span><span class="key">K</span><span class="key">L</span>
       </div>
       <div class="key-row">
-        <div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key">V</div><div class="key">B</div><div class="key">N</div><div class="key">M</div>
+        <span class="key">Z</span><span class="key">X</span><span class="key">C</span><span class="key">V</span><span class="key">B</span><span class="key">N</span><span class="key">M</span>
       </div>
     </div>
 
+    <!-- ゲーム画面の音量 -->
     <div id="volume-area-game">
-      <div id="volume-label-game">BGM</div>
       <input id="volume-slider-game" type="range" min="0" max="100" value="0">
     </div>
 
   </div>
 
-  <!-- JS -->
+  <!-- ============================
+       JS（ES Modules）
+  ============================ -->
   <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/title.js"></script>
+  <script type="module" src="js/game.js"></script>
+  <script type="module" src="js/keyboard.js"></script>
+  <script type="module" src="js/effects.js"></script>
+  <script type="module" src="js/screens.js"></script>
+  <script type="module" src="js/ui.js"></script>
+  <script type="module" src="js/audio.js"></script>
 
 </body>
 </html>

@@ -1,23 +1,7 @@
-/* screens.css */
+/* ============================
+   画面切替（表示/非表示）
+============================ */
 
-#title-screen,
-#game-screen {
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-#title-screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#game-screen {
-  display: none;
-  padding-top: 40px;
-  text-align: center;
-}
+#title-screen { display: block; }   /* 最初に表示 */
+#game-screen  { display: none; }    /* ゲーム開始で表示 */
+#results-screen { display: none; }  /* 結果画面（後で実装） */

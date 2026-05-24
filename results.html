@@ -1,40 +1,70 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>Typing Result</title>
-  <link rel="stylesheet" href="css/results.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>修行タイピング - 結果</title>
+
+  <!-- CSS（index.html と同じ構造） -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/title.css" />
+  <link rel="stylesheet" href="css/game.css" />
+  <link rel="stylesheet" href="css/keyboard.css" />
+  <link rel="stylesheet" href="css/effects.css" />
+  <link rel="stylesheet" href="css/screens.css" />
+  <link rel="stylesheet" href="css/ui.css" />
 </head>
+
 <body>
 
-  <div id="result-container">
-    <h1>修行結果</h1>
+  <!-- ============================
+       結果画面
+  ============================ -->
+  <div id="results-screen">
 
-    <div id="result-main">
-      <div class="result-row">名前：<span id="res-name"></span></div>
-      <div class="result-row">スコア：<span id="res-score"></span></div>
-      <div class="result-row">ミス数：<span id="res-miss"></span></div>
-      <div class="result-row">正確率：<span id="res-accuracy"></span>%</div>
-      <div class="result-row">ランキング対象：<span id="res-employee"></span></div>
+    <h1 id="result-title">修行結果</h1>
+
+    <div id="result-box">
+
+      <div class="result-item">
+        スコア：<span id="result-score">0</span>
+      </div>
+
+      <div class="result-item">
+        最大コンボ：<span id="result-maxcombo">0</span>
+      </div>
+
+      <div class="result-item">
+        タイプ数：<span id="result-total">0</span>
+      </div>
+
+      <div class="result-item">
+        ミス数：<span id="result-miss">0</span>
+      </div>
+
+      <div class="result-item">
+        正確率：<span id="result-accuracy">0</span>%
+      </div>
+
     </div>
 
-    <h2>ミスした単語</h2>
-    <table id="miss-table">
-      <thead>
-        <tr>
-          <th>日本語</th>
-          <th>入力</th>
-          <th>正解</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <div id="buttons">
-      <button id="btn-retry">もう一度修行する</button>
+    <!-- ランキング -->
+    <h2 id="ranking-title">ランキング</h2>
+    <div id="ranking-list">
+      読み込み中…
     </div>
+
+    <!-- ボタン -->
+    <div id="result-buttons">
+      <button id="back-title">タイトルへ戻る</button>
+    </div>
+
   </div>
 
-  <script src="js/results.js"></script>
+  <!-- ============================
+       JS（ES Modules）
+  ============================ -->
+  <script type="module" src="js/results.js"></script>
+
 </body>
 </html>
