@@ -1,148 +1,101 @@
-/* ============================
-   game.css（ゲーム画面）
-   ============================ */
+/* ============================================================
+   game.css
+   ゲーム画面専用のレイアウト・キャラ配置・UI配置
+   ============================================================ */
 
-/* ゲーム画面の全体レイアウト */
+
+/* ============================================
+   ゲーム画面全体
+   ============================================ */
 #game-screen {
   width: 100%;
-  min-height: 100vh;
-  padding: 40px 20px;
-  text-align: center;
-  display: none; /* タイトル画面から切り替えで表示 */
-}
+  height: 100vh;
 
-/* HUD（スコア・コンボ・時間） */
-#hud {
+  position: relative;
+  overflow: hidden;
+
   display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-bottom: 40px;
-  font-size: 1.6rem;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 20px;
+}
+
+
+/* ============================================
+   プレイヤーキャラ（左側）
+   ============================================ */
+#player {
+  position: absolute;
+  left: 80px;        /* 左側に固定 */
+  bottom: 120px;     /* 下からの高さ */
+  width: 260px;      /* キャラサイズ */
+  filter: drop-shadow(0 0 15px #000);
+}
+
+
+/* ============================================
+   敵キャラ（右側）
+   ============================================ */
+#enemy {
+  position: absolute;
+  right: 80px;       /* 右側に固定 */
+  bottom: 120px;
+  width: 260px;
+  filter: drop-shadow(0 0 15px #000);
+}
+
+
+/* ============================================
+   HPバー（敵）
+   ============================================ */
+#enemy-hp {
+  position: absolute;
+  top: 40px;
+  right: 80px;
+}
+
+
+/* ============================================
+   HPバー（プレイヤー）
+   ============================================ */
+#player-hp {
+  position: absolute;
+  top: 40px;
+  left: 80px;
+}
+
+
+/* ============================================
+   タイピング単語表示
+   ============================================ */
+#word-box {
+  margin-top: 120px;
+  text-align: center;
+}
+
+#current-word {
+  font-size: 48px;
   font-weight: bold;
+  text-shadow: 0 0 10px #000;
 }
 
-/* HUD の各項目 */
-.hud-item {
-  text-shadow: 0 0 6px #fff;
-}
 
-/* 日本語（ひらがな・漢字）表示 — ひとまわり小さく調整済み */
-#word-jp {
-  font-size: 3.2vw;   /* 旧: 4vw → 約20%縮小 */
-  font-weight: bold;
-  margin-bottom: 10px;
-  letter-spacing: 0.1vw;
-}
-
-/* ローマ字（カタカナ風英字）表示 — ひとまわり小さく調整済み */
-#word-romaji {
-  font-size: 2.2vw;   /* 旧: 2.8vw → 約20%縮小 */
-  font-weight: bold;
-  letter-spacing: 0.15vw;
-  margin-bottom: 40px;
-}
-
-/* キャラクター画像 */
-#character {
-  width: 200px;
-  height: auto;
+/* ============================================
+   入力欄
+   ============================================ */
+#type-input {
   margin-top: 20px;
-  margin-bottom: 20px;
-  filter: drop-shadow(0 0 10px #fff);
+  width: 300px;
+  font-size: 24px;
+  text-align: center;
 }
 
-/* 気弾（ki-ball） */
-#ki-ball {
+
+/* ============================================
+   キーボードUI（下部固定）
+   ============================================ */
+#keyboard {
   position: absolute;
-  left: 50%;
-  top: 55%;
-  transform: translate(-50%, -50%) scale(0.02);
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  transition: transform 0.15s linear;
-  pointer-events: none;
-  z-index: 5;
-}
-
-/* 気弾の色（UIテーマで上書きされる） */
-#ki-ball.blue {
-  background: radial-gradient(circle, #66aaff, #0044aa);
-}
-
-#ki-ball.white {
-  background: radial-gradient(circle, #ffffff, #cccccc);
-}
-
-#ki-ball.gold {
-  background: radial-gradient(circle, #ffe066, #cc9a00);
-}
-
-/* 気弾 MAX の脈動アニメ */
-#ki-ball.pulse {
-  animation: kiPulse 0.6s infinite alternate;
-}
-
-@keyframes kiPulse {
-  from { transform: translate(-50%, -50%) scale(1.0); }
-  to   { transform: translate(-50%, -50%) scale(1.15); }
-}
-
-/* ビーム */
-#beam {
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  width: 0;
-  height: 12px;
-  background: linear-gradient(to right, #fff, #88f);
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  z-index: 4;
-}
-
-/* ビーム発射アニメ */
-#beam.beam-fire {
-  animation: beamFire 0.5s ease-out;
-}
-
-@keyframes beamFire {
-  0% {
-    width: 0;
-    opacity: 1;
-  }
-  50% {
-    width: 80vw;
-    opacity: 1;
-  }
-  100% {
-    width: 100vw;
-    opacity: 0;
-  }
-}
-
-/* 音量スライダー（ゲーム画面） */
-#volume-slider-game {
-  margin-top: 40px;
-  width: 240px;
-}
-
-/* スマホ対応 */
-@media (max-width: 600px) {
-  #hud {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  #word-jp {
-    font-size: 6vw;
-  }
-
-  #word-romaji {
-    font-size: 4vw;
-  }
-
-  #character {
-    width: 150px;
-  }
+  bottom: 20px;
 }

@@ -1,118 +1,98 @@
-/* ============================
-   title.css（タイトル画面）
-   ============================ */
+/* ============================================================
+   title.css
+   タイトル画面専用デザイン
+   - タイトルロゴ
+   - 名前入力欄
+   - 性別選択
+   - コース選択
+   ============================================================ */
 
-/* タイトル画面の全体レイアウト */
+
+/* ============================================
+   タイトル画面の背景
+   ============================================ */
 #title-screen {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+
   display: flex;
-  flex-direction: column;     /* 縦に並べる */
-  justify-content: center;    /* 縦中央 */
-  align-items: center;        /* 横中央 */
-  padding: 40px 20px;
-  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* タイトル専用背景（任意で差し替えOK） */
+  background: url("../images/title/title_bg.png") center/cover no-repeat;
 }
 
-/* ゲームタイトル */
-#game-title {
-  font-size: 3.6rem;
-  font-weight: 900;
+
+/* ============================================
+   タイトルロゴ
+   ============================================ */
+#title-screen h1 {
+  font-size: 64px;
+  font-weight: bold;
   margin-bottom: 30px;
-  letter-spacing: 0.1em;
-  text-shadow: 0 0 10px #fff;
+
+  text-shadow: 0 0 20px #000;
+  letter-spacing: 4px;
 }
 
-/* 名前入力エリア */
-#name-area {
-  margin-bottom: 30px;
+
+/* ============================================
+   名前入力エリア
+   ============================================ */
+#title-screen .input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
-/* 名前入力欄 */
-#name-input {
-  width: 260px;
+#title-screen input {
+  width: 280px;
   padding: 12px;
-  font-size: 1.2rem;
-  border-radius: 6px;
+  font-size: 22px;
+  border-radius: 10px;
   border: none;
   outline: none;
-  margin-bottom: 10px;
-}
+  text-align: center;
 
-/* 決定ボタン */
-#name-submit {
-  background-color: #ffcc00;
+  background: rgba(255,255,255,0.85);
   color: #000;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
 }
 
-#name-submit:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
-
-/* エラーメッセージ */
 #name-error {
-  margin-top: 8px;
-  color: #ff6b6b;
-  font-size: 1rem;
+  margin-top: 6px;
+  height: 20px;
+  font-size: 16px;
 }
 
-/* コース選択ボタンのエリア */
-#course-buttons {
-  display: none; /* 名前入力後に表示される */
-  margin-top: 20px;
-}
 
-/* コースボタン */
-.course-btn {
-  background-color: #00aaff;
-  color: #fff;
-  border-radius: 8px;
+/* ============================================
+   性別選択ボタン
+   ============================================ */
+.gender-btn {
+  margin: 0 12px;
   padding: 12px 24px;
-  font-size: 1.3rem;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+
+/* ============================================
+   コース選択ボタン
+   ============================================ */
+.course-buttons {
+  margin-top: 35px;
+  display: flex;
+  gap: 25px;
+}
+
+.course-btn {
+  width: 160px;
+  padding: 14px 0;
+  font-size: 24px;
+  border-radius: 12px;
   font-weight: bold;
-  margin: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.course-btn:hover {
-  transform: scale(1.08);
-  opacity: 0.9;
-}
-
-/* 音量スライダー */
-#volume-slider {
-  margin-top: 30px;
-  width: 240px;
-}
-
-/* スライダーのラベル */
-#volume-label {
-  font-size: 1rem;
-  margin-bottom: 6px;
-  display: block;
-  opacity: 0.8;
-}
-
-/* スマホ対応 */
-@media (max-width: 600px) {
-  #game-title {
-    font-size: 2.4rem;
-  }
-
-  .course-btn {
-    width: 100%;
-    margin: 8px 0;
-  }
-
-  #name-input {
-    width: 100%;
-  }
+  text-shadow: 0 0 10px #000;
 }

@@ -1,67 +1,70 @@
+<!-- ============================================================
+     results.html（リザルト画面）
+     - スコア表示
+     - 命中率表示
+     - ランキング表示（Supabase）
+     - タイトルへ戻るボタン
+     ============================================================ -->
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>Typing Battle - Results</title>
 
-  <!-- CSS -->
+  <!-- ============================
+       CSS 読み込み
+       ============================ -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/ui.css">
-  <link rel="stylesheet" href="css/results.css">
-
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link rel="stylesheet" href="css/screens.css">
 </head>
 
-<body class="theme-male">
+<body>
 
-  <!-- ============================
-       結果画面
-       ============================ -->
-  <div class="container" id="results-screen">
+  <!-- ============================================================
+       リザルト画面
+       ============================================================ -->
+  <div id="results-screen" class="screen">
 
-    <h1 id="results-title">RESULT</h1>
+    <!-- タイトル -->
+    <h2>RESULT</h2>
 
-    <!-- 前回スコア -->
-    <div id="result-box">
+    <!-- スコア表示ボックス -->
+    <div class="result-box">
+      <p>名前：<span id="result-name">---</span></p>
       <p>スコア：<span id="result-score">0</span></p>
-      <p>最大コンボ：<span id="result-maxcombo">0</span></p>
-      <p>総タイプ数：<span id="result-total">0</span></p>
-      <p>ミス：<span id="result-miss">0</span></p>
-      <p>正確率：<span id="result-accuracy">0%</span></p>
+      <p>命中率：<span id="result-accuracy">0%</span></p>
     </div>
 
-    <!-- ランキング -->
-    <h2>ランキング TOP10</h2>
-    <table>
+    <!-- ランキング表示 -->
+    <h3>ランキング TOP10</h3>
+
+    <table id="ranking-table">
       <thead>
         <tr>
           <th>順位</th>
           <th>名前</th>
           <th>スコア</th>
-          <th>正確率</th>
+          <th>命中率</th>
           <th>日付</th>
         </tr>
       </thead>
       <tbody id="ranking-body">
-        <!-- JS で自動挿入 -->
+        <!-- JS で Supabase から読み込んで埋め込む -->
       </tbody>
     </table>
 
-    <!-- ボタン -->
-    <div style="margin-top: 40px;">
-      <button id="back-title">タイトルへ戻る</button>
-    </div>
+    <!-- タイトルへ戻る -->
+    <button id="back-title">タイトルへ戻る</button>
 
   </div>
 
-  <!-- ============================
-       JS（読み込み順）
-       ============================ -->
-  <script type="module" src="js/ui.js"></script>
-  <script type="module" src="js/supabase.js"></script>
+  <!-- ============================================================
+       JS 読み込み
+       ============================================================ -->
   <script type="module" src="js/results.js"></script>
+  <script type="module" src="js/supabase.js"></script>
 
 </body>
 </html>

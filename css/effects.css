@@ -1,73 +1,109 @@
-/* ============================
-   effects.css（演出エフェクト）
-   ============================ */
+/* ============================================================
+   effects.css
+   攻撃エフェクト・アニメーション・ダメージ演出
+   ============================================================ */
 
-/* ----------------------------------------
-   画面フラッシュ（白く光る演出）
-   body に .flash が付いたとき発動
------------------------------------------ */
-body.flash {
-  animation: flashScreen 0.3s ease-out;
+
+/* ============================================
+   気弾（プレイヤー側）
+   ============================================ */
+#ki-ball {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+
+  /* 初期位置はプレイヤーの近く（左側） */
+  left: 200px;
+  top: 300px;
+
+  /* 最初は非表示（game.js で表示） */
+  display: none;
+
+  /* 光る感じ */
+  filter: drop-shadow(0 0 20px #00ccff);
 }
 
-@keyframes flashScreen {
-  0% {
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-  100% {
-    background-color: rgba(0, 0, 0, 1);
-  }
-}
 
-/* ----------------------------------------
-   ビーム（#beam）
-   game.css 側の beamFire と連動
------------------------------------------ */
+/* ============================================
+   ビーム（かめはめ波）
+   ============================================ */
 #beam {
   position: absolute;
-  left: 50%;
-  top: 55%;
-  width: 0;
-  height: 12px;
-  background: linear-gradient(to right, #fff, #88f);
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  z-index: 4;
+  width: 400px;
+  height: 120px;
+
+  /* プレイヤー側から右へ伸びる */
+  left: 250px;
+  top: 260px;
+
+  display: none;
+
+  /* 青い光のエフェクト */
+  filter: drop-shadow(0 0 25px #66ccff);
 }
 
-/* ビーム発射アニメ（effects.js / game.js から付与） */
-#beam.beam-fire {
-  animation: beamFire 0.5s ease-out;
+
+/* ============================================
+   敵・プレイヤーのダメージ点滅
+   ============================================ */
+.damage-flash {
+  animation: flash 0.2s linear 3;
 }
 
-@keyframes beamFire {
-  0% {
-    width: 0;
-    opacity: 1;
-  }
-  50% {
-    width: 80vw;
-    opacity: 1;
-  }
-  100% {
-    width: 100vw;
-    opacity: 0;
-  }
+@keyframes flash {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.2; }
+  100% { opacity: 1; }
 }
 
-/* ----------------------------------------
-   気弾（ki-ball）脈動アニメ
-   MAX 時に pulse クラスが付く
------------------------------------------ */
-#ki-ball.pulse {
-  animation: kiPulse 0.6s infinite alternate;
+
+/* ============================================
+   画面揺れ（攻撃ヒット時）
+   ============================================ */
+.screen-shake {
+  animation: shake 0.4s ease-in-out;
 }
 
-@keyframes kiPulse {
-  from {
-    transform: translate(-50%, -50%) scale(1.0);
-  }
-  to {
-    transform: translate(-50%, -50%) scale(1.15);
-  }
+@keyframes shake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-10px, 5px); }
+  40%  { transform: translate(8px, -8px); }
+  60%  { transform: translate(-6px, 6px); }
+  80%  { transform: translate(4px, -4px); }
+  100% { transform: translate(0, 0); }
+}
+
+
+/* ============================================
+   ヒットエフェクト（爆発）
+   ============================================ */
+.hit-effect {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+
+  /* 敵の位置に合わせて game.js で座標変更 */
+  display: none;
+
+  filter: drop-shadow(0 0 20px #ffcc00);
+  animation: hit-pop 0.3s ease-out forwards;
+}
+
+@keyframes hit-pop {
+  0%   { transform: scale(0.2); opacity: 0; }
+  50%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+
+/* ============================================
+   かめはめ波のチャージ演出
+   ============================================ */
+.charge {
+  animation: charge-glow 0.6s infinite alternate;
+}
+
+@keyframes charge-glow {
+  0%   { filter: drop-shadow(0 0 10px #00ccff); }
+  100% { filter: drop-shadow(0 0 25px #66ffff); }
 }

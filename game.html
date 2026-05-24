@@ -1,0 +1,78 @@
+<!-- ============================================================
+     game.html（ゲーム画面）
+     - 敵キャラ / プレイヤーキャラ
+     - HPバー
+     - タイピング単語
+     - 入力欄
+     - エフェクト（ビーム・気弾）
+     - キーボードUI
+     ============================================================ -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Typing Battle - Game</title>
+
+  <!-- ============================
+       CSS 読み込み
+       ============================ -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/keyboard.css">
+  <link rel="stylesheet" href="css/effects.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       ゲーム画面
+       ============================================================ -->
+  <div id="game-screen" class="screen">
+
+    <!-- 敵キャラ（右側） -->
+    <img id="enemy" src="images/enemy/enemy_idle.png" alt="enemy">
+
+    <!-- プレイヤーキャラ（左側） -->
+    <img id="player" src="images/player/player_idle.png" alt="player">
+
+    <!-- 気弾（プレイヤー側） -->
+    <img id="ki-ball" src="images/effects/ki_blue.png" style="display:none;">
+
+    <!-- ビーム（かめはめ波） -->
+    <img id="beam" src="images/effects/beam.png" style="display:none;">
+
+    <!-- HPバー（敵） -->
+    <div id="enemy-hp" class="hp-bar">
+      <div id="enemy-hp-inner"></div>
+    </div>
+
+    <!-- HPバー（プレイヤー） -->
+    <div id="player-hp" class="hp-bar">
+      <div id="player-hp-inner"></div>
+    </div>
+
+    <!-- タイピング単語表示 -->
+    <div id="word-box">
+      <div id="current-word">loading...</div>
+    </div>
+
+    <!-- 入力欄 -->
+    <input id="type-input" type="text" autocomplete="off" />
+
+    <!-- キーボードUI -->
+    <div id="keyboard"></div>
+
+  </div>
+
+  <!-- ============================================================
+       JS 読み込み
+       ============================================================ -->
+  <script type="module" src="js/game.js"></script>
+  <script type="module" src="js/ui.js"></script>
+  <script type="module" src="js/effects.js"></script>
+  <script type="module" src="js/screens.js"></script>
+
+</body>
+</html>

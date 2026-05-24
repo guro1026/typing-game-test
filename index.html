@@ -1,83 +1,79 @@
+<!-- ============================================================
+     index.html（タイトル画面）
+     - 名前入力
+     - 性別選択（男 / 女）
+     - コース選択（EASY / NORMAL / HARD）
+     - ゲーム開始前の入口
+     ============================================================ -->
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Typing Battle</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/title.css">
-  <link rel="stylesheet" href="css/game.css">
-  <link rel="stylesheet" href="css/keyboard.css">
-  <link rel="stylesheet" href="css/effects.css">
-  <link rel="stylesheet" href="css/screens.css">
-  <link rel="stylesheet" href="css/ui.css">
-
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-</head>
-
-<body class="theme-male">
+  <meta charset="UTF-8" />
+  <title>Typing Battle - Title</title>
 
   <!-- ============================
-       タイトル画面
+       CSS 読み込み
        ============================ -->
-  <div id="title-screen">
-    <h1 id="game-title">Typing Battle</h1>
+  <!-- 全体の初期設定（フォント・リセット） -->
+  <link rel="stylesheet" href="css/base.css">
 
-    <div id="name-area">
-      <input id="name-input" type="text" placeholder="名前を入力">
-      <button id="name-submit">決定</button>
-      <div id="name-error"></div>
+  <!-- 共通UI（ボタン・テーマカラー） -->
+  <link rel="stylesheet" href="css/ui.css">
+
+  <!-- 画面レイアウト（中央寄せなど） -->
+  <link rel="stylesheet" href="css/screens.css">
+</head>
+
+<!-- body に theme-male / theme-female が付く（初期は male） -->
+<body class="theme-male">
+
+  <!-- ============================================================
+       タイトル画面
+       ============================================================ -->
+  <div id="title-screen" class="screen">
+
+    <!-- ゲームタイトル -->
+    <h1>Typing Battle</h1>
+
+    <!-- 名前入力エリア -->
+    <div class="input-area">
+      <!-- 名前入力欄 -->
+      <input id="name-input" type="text" placeholder="名前を入力" />
+
+      <!-- エラーメッセージ表示欄 -->
+      <div id="name-error" style="color: #ff6666; height: 20px;"></div>
+
+      <!-- 名前決定ボタン -->
+      <button id="name-submit">名前を決定</button>
     </div>
 
-    <div id="course-buttons">
+    <!-- 性別選択ボタン -->
+    <div style="margin-top: 20px;">
+      <button class="gender-btn" data-gender="male">男性</button>
+      <button class="gender-btn" data-gender="female">女性</button>
+    </div>
+
+    <!-- コース選択（名前が決まってから押せる） -->
+    <div class="course-buttons">
       <button class="course-btn" data-course="easy">EASY</button>
       <button class="course-btn" data-course="normal">NORMAL</button>
       <button class="course-btn" data-course="hard">HARD</button>
     </div>
 
-    <label id="volume-label">音量</label>
-    <input id="volume-slider" type="range" min="0" max="1" step="0.01">
   </div>
 
-
-  <!-- ============================
-       ゲーム画面
-       ============================ -->
-  <div id="game-screen">
-
-    <div id="hud">
-      <div class="hud-item">スコア: <span id="score">0</span></div>
-      <div class="hud-item">コンボ: <span id="combo">0</span></div>
-      <div class="hud-item">残り: <span id="time">60</span>s</div>
-    </div>
-
-    <div id="word-jp">こんにちは</div>
-    <div id="word-romaji">konnichiwa</div>
-
-    <img id="character" src="img/male.png">
-
-    <div id="ki-ball"></div>
-    <div id="beam"></div>
-
-    <div id="keyboard"></div>
-
-    <input id="volume-slider-game" type="range" min="0" max="1" step="0.01">
-  </div>
-
-
-  <!-- ============================
-       JS（読み込み順が重要）
-       ============================ -->
-  <script type="module" src="js/ui.js"></script>
-  <script type="module" src="js/screens.js"></script>
-  <script type="module" src="js/keyboard.js"></script>
-  <script type="module" src="js/effects.js"></script>
-  <script type="module" src="js/supabase.js"></script>
-  <script type="module" src="js/game.js"></script>
+  <!-- ============================================================
+       JS 読み込み
+       ============================================================ -->
+  <!-- 性別選択・初期化 -->
   <script type="module" src="js/main.js"></script>
+
+  <!-- 画面遷移（タイトル → ゲーム） -->
+  <script type="module" src="js/screens.js"></script>
+
+  <!-- UI テーマ切り替え -->
+  <script type="module" src="js/ui.js"></script>
 
 </body>
 </html>

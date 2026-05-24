@@ -1,43 +1,89 @@
-// ============================
-// screens.js（画面切り替え管理）
-// ============================
-// このファイルは「タイトル画面」「ゲーム画面」を切り替えるだけの
-// シンプルで壊れにくいモジュール。
-// ============================
+/* ============================================================
+   screens.js
+   画面遷移コントローラー
+   - 名前入力チェック
+   - 性別選択
+   - コース選択
+   - ゲーム画面へ遷移
+   ============================================================ */
+
+import { playBGM, stopAllBGM } from "./audio.js";
+
+/* ------------------------------------------------------------
+   DOM 要素
+   ------------------------------------------------------------ */
+const nameInput = document.getElementById("player-name");
+const nameError = document.getElementById("name-error");
+
+const courseButtons = document.querySelectorAll(".course-btn");
+const startButton = document.getElementById("start-btn");
 
 
-// ------------------------------------------------------------
-// DOM 要素の取得
-// ------------------------------------------------------------
-const titleScreen = document.getElementById("title-screen"); // タイトル画面
-const gameScreen  = document.getElementById("game-screen");  // ゲーム画面
+
+/* ============================================================
+   初期ロード：タイトルBGM
+   ============================================================ */
+window.addEventListener("DOMContentLoaded", () => {
+  stopAllBGM();
+  playBGM("title");
+});
 
 
-// ------------------------------------------------------------
-// タイトル画面を表示する
-// ------------------------------------------------------------
-export function showTitle() {
-  // タイトル画面を表示
-  titleScreen.style.display = "block";
 
-  // ゲーム画面を非表示
-  gameScreen.style.display = "none";
+/* ============================================================
+   名前チェック
+   ============================================================ */
+function validateName() {
+  const name = nameInput.value.trim();
 
-  // ゲーム画面のスクロール位置をリセット（念のため）
-  window.scrollTo(0, 0);
+  if (name.length === 0) {
+    nameError.textContent = "名前を入力してください";
+    return false;
+  }
+
+  if (name.length > 12) {
+    nameError.textContent = "名前は12文字以内です";
+    return false;
+  }
+
+  nameError.textContent = "";
+  return true;
 }
 
 
-// ------------------------------------------------------------
-// ゲーム画面を表示する
-// ------------------------------------------------------------
-export function showGame() {
-  // タイトル画面を非表示
-  titleScreen.style.display = "none";
 
-  // ゲーム画面を表示
-  gameScreen.style.display = "block";
+/* ============================================================
+   コース選択（easy / normal / hard）
+   ============================================================ */
+courseButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const course = btn.dataset.course;
 
-  // ゲーム画面のスクロール位置をリセット
-  window.scrollTo(0, 0);
-}
+    // localStorage に保存
+    localStorage.setItem("course", course);
+
+    // 見た目の選択状態
+    courseButtons.forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+  });
+});
+
+
+
+/* ============================================================
+   ゲーム開始ボタン
+   ============================================================ */
+startButton.addEventListener("click", () => {
+  if (!validateName()) return;
+
+  // 名前保存
+  localStorage.setItem("playerName", nameInput.value.trim());
+
+  // コース未選択なら easy
+  if (!localStorage.getItem("course")) {
+    localStorage.setItem("course", "easy");
+  }
+
+  // ゲーム画面へ
+  window.location.href = "game.html";
+});
