@@ -21,6 +21,9 @@ export const gameState = {
     this.missCount = 0;
     this.totalCount = 0;
     this.timeLeft = 60;
+    this.words = [];
+    this.currentJP = "";
+    this.currentRomaji = "";
     this.missData = {};
   }
 };

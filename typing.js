@@ -20,6 +20,7 @@ export const typing = {
 
     if (key === target) {
       audio.hit();
+
       gameState.currentRomaji = gameState.currentRomaji.slice(1);
       ui.updateWord(gameState.currentJP, gameState.currentRomaji);
 
@@ -34,8 +35,10 @@ export const typing = {
 
       if (gameState.currentRomaji.length === 0) {
         effects.growKi();
+
         gameState.combo++;
         if (gameState.combo > gameState.maxCombo) gameState.maxCombo = gameState.combo;
+
         ui.updateHUD(gameState);
         setTimeout(() => this.nextWord(), 200);
       }
@@ -44,6 +47,7 @@ export const typing = {
       audio.beep();
       gameState.missCount++;
       gameState.combo = 0;
+
       ui.updateHUD(gameState);
       effects.updateKiColor(0);
 

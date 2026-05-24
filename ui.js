@@ -1,5 +1,15 @@
 // ui.js
 export const ui = {
+  showTitle() {
+    document.getElementById("title-screen").style.display = "block";
+    document.getElementById("game-screen").style.display = "none";
+  },
+
+  showGame() {
+    document.getElementById("title-screen").style.display = "none";
+    document.getElementById("game-screen").style.display = "block";
+  },
+
   updateHUD(game) {
     document.getElementById("hud-score").textContent = game.score;
     document.getElementById("hud-combo").textContent = game.combo;
@@ -20,15 +30,5 @@ export const ui = {
 
     keyEl.classList.add("active");
     setTimeout(() => keyEl.classList.remove("active"), 150);
-  },
-
-  showTitle() {
-    document.getElementById("title-screen").style.display = "block";
-    document.getElementById("game-screen").style.display = "none";
-  },
-
-  showGame() {
-    document.getElementById("title-screen").style.display = "none";
-    document.getElementById("game-screen").style.display = "block";
   }
 };
