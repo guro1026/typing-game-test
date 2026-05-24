@@ -1,0 +1,26 @@
+/* screens.css */
+
+#title-screen,
+#game-screen,
+#result-screen {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#title-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-screen {
+  display: none;
+}
+
+#result-screen {
+  display: none;
+}

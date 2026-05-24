@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>結果画面</title>
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+
+<body>
+
+  <div id="result-screen">
+
+    <h1>修行結果</h1>
+
+    <div class="result-box">
+      <p>名前：<span id="res-name"></span></p>
+      <p>スコア：<span id="res-score"></span></p>
+      <p>ミス：<span id="res-miss"></span></p>
+      <p>正確率：<span id="res-accuracy"></span>%</p>
+    </div>
+
+    <h2>弱点分析</h2>
+    <div class="result-box">
+      <p id="res-weak-key"></p>
+      <p id="res-weak-advice"></p>
+    </div>
+
+    <h2>今月の順位</h2>
+    <p id="res-rank"></p>
+
+    <h2>ランキングTOP10</h2>
+    <div id="ranking"></div>
+
+    <button onclick="location.href='index.html'">タイトルへ戻る</button>
+  </div>
+
+  <script type="module" src="js/results.js"></script>
+
+</body>
+</html>

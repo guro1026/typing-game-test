@@ -1,0 +1,9 @@
+/* theme.css */
+
+body.male-ui {
+  background: linear-gradient(#001020, #003060);
+}
+
+body.female-ui {
+  background: linear-gradient(#200010, #600030);
+}

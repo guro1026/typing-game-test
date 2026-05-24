@@ -1,0 +1,42 @@
+/* ui.css */
+
+#hud {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+}
+
+#hud span {
+  margin-right: 20px;
+}
+
+button,
+.course-btn {
+  padding: 12px 24px;
+  font-size: 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #444;
+  color: #fff;
+  transition: 0.2s;
+}
+
+button:hover,
+.course-btn:hover {
+  background: #666;
+}
+
+#word-jp {
+  font-size: 48px;
+  text-align: center;
+  margin-top: 120px;
+}
+
+#word-romaji {
+  font-size: 36px;
+  text-align: center;
+  margin-top: 10px;
+  letter-spacing: 4px;
+}
