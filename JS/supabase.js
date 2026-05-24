@@ -1,28 +1,34 @@
-// js/supabase.js
-export const supa = {
-  url: "https://bznzxcllyocfairwjzzk.supabase.co",
-  key: "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e",
+// supabase.js
 
+const SUPABASE_URL = "https://bznzxcllyocfairwjzzk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e";
+
+export const supa = {
   async saveScore(name, score, total, miss, accuracy) {
     try {
-      await fetch(`${this.url}/rest/v1/score_logs`, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/score_logs`, {
         method: "POST",
         headers: {
-          "apikey": this.key,
-          "Authorization": `Bearer ${this.key}`,
           "Content-Type": "application/json",
-          "Prefer": "return=minimal"
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Prefer: "return=minimal"
         },
         body: JSON.stringify({
           name,
           score,
           total,
           miss,
-          accuracy
+          accuracy,
+          created_at: new Date().toISOString()
         })
       });
-    } catch (err) {
-      console.warn("Supabase 保存失敗:", err);
+
+      if (!res.ok) {
+        console.error("Supabase 保存失敗:", await res.text());
+      }
+    } catch (e) {
+      console.error("Supabase 通信エラー:", e);
     }
   }
 };

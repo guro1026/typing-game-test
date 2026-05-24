@@ -1,44 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>結果画面</title>
-
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/screens.css">
-  <link rel="stylesheet" href="css/ui.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <meta charset="UTF-8">
+  <title>Typing Result</title>
+  <link rel="stylesheet" href="css/results.css">
 </head>
-
 <body>
 
-  <div id="result-screen">
-
+  <div id="result-container">
     <h1>修行結果</h1>
 
-    <div class="result-box">
-      <p>名前：<span id="res-name"></span></p>
-      <p>スコア：<span id="res-score"></span></p>
-      <p>ミス：<span id="res-miss"></span></p>
-      <p>正確率：<span id="res-accuracy"></span>%</p>
+    <div id="result-main">
+      <div class="result-row">名前：<span id="res-name"></span></div>
+      <div class="result-row">スコア：<span id="res-score"></span></div>
+      <div class="result-row">ミス数：<span id="res-miss"></span></div>
+      <div class="result-row">正確率：<span id="res-accuracy"></span>%</div>
+      <div class="result-row">ランキング対象：<span id="res-employee"></span></div>
     </div>
 
-    <h2>弱点分析</h2>
-    <div class="result-box">
-      <p id="res-weak-key"></p>
-      <p id="res-weak-advice"></p>
+    <h2>ミスした単語</h2>
+    <table id="miss-table">
+      <thead>
+        <tr>
+          <th>日本語</th>
+          <th>入力</th>
+          <th>正解</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="buttons">
+      <button id="btn-retry">もう一度修行する</button>
     </div>
-
-    <h2>今月の順位</h2>
-    <p id="res-rank"></p>
-
-    <h2>ランキングTOP10</h2>
-    <div id="ranking"></div>
-
-    <button onclick="location.href='index.html'">タイトルへ戻る</button>
   </div>
 
-  <script type="module" src="js/results.js"></script>
-
+  <script src="js/results.js"></script>
 </body>
 </html>

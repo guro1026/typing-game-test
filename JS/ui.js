@@ -1,34 +1,20 @@
-// js/ui.js
+// ui.js
+
 export const ui = {
-  showTitle() {
-    document.getElementById("title-screen").style.display = "flex";
-    document.getElementById("game-screen").style.display = "none";
+  updateHUD(state) {
+    document.getElementById("hud-time").textContent = state.timeLeft;
+    document.getElementById("hud-score").textContent = state.score;
+    document.getElementById("hud-combo").textContent = state.combo;
   },
 
-  showGame() {
-    document.getElementById("title-screen").style.display = "none";
-    document.getElementById("game-screen").style.display = "block";
-  },
+  showWord(jp, romaji, index) {
+    const jpEl = document.getElementById("word-jp");
+    const romajiEl = document.getElementById("word-romaji");
 
-  updateHUD(game) {
-    document.getElementById("hud-score").textContent = game.score;
-    document.getElementById("hud-combo").textContent = game.combo;
-    document.getElementById("hud-time").textContent = game.timeLeft;
-  },
+    jpEl.textContent = jp;
 
-  updateWord(jp, romaji) {
-    document.getElementById("word-jp").textContent = jp;
-    document.getElementById("word-romaji").textContent = romaji;
-  },
-
-  highlightKey(key) {
-    const upper = key.toUpperCase();
-    const keyEl = [...document.querySelectorAll(".key")]
-      .find(k => k.textContent.toUpperCase() === upper);
-
-    if (!keyEl) return;
-
-    keyEl.classList.add("active");
-    setTimeout(() => keyEl.classList.remove("active"), 150);
+    const done = romaji.slice(0, index);
+    const rest = romaji.slice(index);
+    romajiEl.innerHTML = `<span style="color:#fff;">${done}</span><span style="color:#aee7ff;">${rest}</span>`;
   }
 };

@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>Typing Training</title>
+  <meta charset="UTF-8">
+  <title>Typing Game</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/screens.css">
-  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/keyboard.css">
-  <link rel="stylesheet" href="css/effects.css">
   <link rel="stylesheet" href="css/theme.css">
 </head>
 
@@ -17,61 +15,72 @@
 
   <!-- タイトル画面 -->
   <div id="title-screen">
-    <h1>タイピング修行</h1>
+
+    <div id="bg-layer"></div>
+
+    <img id="title-girl" src="images/character_Woman.png">
+    <img id="title-boy" src="images/character_men.png">
+
+    <img id="title-main" src="images/title_main.png">
+
+    <div id="title-subtext">タイピングで気を高めろ！</div>
 
     <div id="name-area">
-      <input id="name-input" type="text" placeholder="姓　名（全角スペース）">
-      <button id="name-submit">決定</button>
       <div id="name-error"></div>
+      <input id="name-input" placeholder="姓　名（全角スペース）">
+      <button id="name-submit">決定</button>
     </div>
 
-    <div id="course-buttons" class="hidden">
-      <button class="course-btn" data-course="basic">基礎</button>
-      <button class="course-btn" data-course="advance">応用</button>
-      <button class="course-btn" data-course="boss">ボス戦</button>
+    <div id="course-buttons" style="display:none;">
+      <button class="course-btn" data-course="easy">EASY</button>
+      <button class="course-btn" data-course="business">BUSINESS</button>
+      <button class="course-btn" data-course="it">IT</button>
+      <button class="course-btn" data-course="mail">MAIL</button>
     </div>
 
-    <div class="volume-box">
+    <div id="volume-area">
+      <div id="volume-label">BGM</div>
       <input id="volume-slider" type="range" min="0" max="100" value="0">
     </div>
+
   </div>
 
   <!-- ゲーム画面 -->
   <div id="game-screen">
 
-    <div id="hud">
-      <span>Score: <span id="hud-score">0</span></span>
-      <span>Combo: <span id="hud-combo">0</span></span>
-      <span>Time: <span id="hud-time">60</span></span>
-    </div>
-
     <div id="word-jp"></div>
     <div id="word-romaji"></div>
 
-    <div id="ki-ball" class="blue"></div>
+    <div id="fighter">
+      <img id="character" src="images/character_men_kiball.png">
+      <img id="ki-ball" src="images/kiball_blue.png" class="blue">
+    </div>
+
     <div id="beam"></div>
 
-    <div class="keyboard">
+    <div id="hud">
+      <div class="hud-item">TIME: <span id="hud-time">60</span></div>
+      <div class="hud-item">SCORE: <span id="hud-score">0</span></div>
+      <div class="hud-item">COMBO: <span id="hud-combo">0</span></div>
+    </div>
+
+    <div id="keyboard">
       <div class="key-row">
-        <span class="key">Q</span><span class="key">W</span><span class="key">E</span>
-        <span class="key">R</span><span class="key">T</span><span class="key">Y</span>
-        <span class="key">U</span><span class="key">I</span><span class="key">O</span><span class="key">P</span>
+        <div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div><div class="key">T</div><div class="key">Y</div><div class="key">U</div><div class="key">I</div><div class="key">O</div><div class="key">P</div>
       </div>
       <div class="key-row">
-        <span class="key">A</span><span class="key">S</span><span class="key">D</span>
-        <span class="key">F</span><span class="key">G</span><span class="key">H</span>
-        <span class="key">J</span><span class="key">K</span><span class="key">L</span>
+        <div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key">F</div><div class="key">G</div><div class="key">H</div><div class="key">J</div><div class="key">K</div><div class="key">L</div>
       </div>
       <div class="key-row">
-        <span class="key">Z</span><span class="key">X</span><span class="key">C</span>
-        <span class="key">V</span><span class="key">B</span><span class="key">N</span>
-        <span class="key">M</span>
+        <div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key">V</div><div class="key">B</div><div class="key">N</div><div class="key">M</div>
       </div>
     </div>
 
-    <div class="volume-box">
+    <div id="volume-area-game">
+      <div id="volume-label-game">BGM</div>
       <input id="volume-slider-game" type="range" min="0" max="100" value="0">
     </div>
+
   </div>
 
   <!-- JS -->
