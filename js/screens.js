@@ -1,23 +1,43 @@
 // ============================
-// screens.js（画面切り替え）
+// screens.js（画面切り替え管理）
+// ============================
+// このファイルは「タイトル画面」「ゲーム画面」を切り替えるだけの
+// シンプルで壊れにくいモジュール。
 // ============================
 
+
+// ------------------------------------------------------------
+// DOM 要素の取得
+// ------------------------------------------------------------
+const titleScreen = document.getElementById("title-screen"); // タイトル画面
+const gameScreen  = document.getElementById("game-screen");  // ゲーム画面
+
+
+// ------------------------------------------------------------
+// タイトル画面を表示する
+// ------------------------------------------------------------
 export function showTitle() {
-  document.getElementById("title-screen").style.display = "block";
-  document.getElementById("game-screen").style.display = "none";
-  const result = document.getElementById("results-screen");
-  if (result) result.style.display = "none";
+  // タイトル画面を表示
+  titleScreen.style.display = "block";
+
+  // ゲーム画面を非表示
+  gameScreen.style.display = "none";
+
+  // ゲーム画面のスクロール位置をリセット（念のため）
+  window.scrollTo(0, 0);
 }
 
+
+// ------------------------------------------------------------
+// ゲーム画面を表示する
+// ------------------------------------------------------------
 export function showGame() {
-  document.getElementById("title-screen").style.display = "none";
-  document.getElementById("game-screen").style.display = "block";
-  const result = document.getElementById("results-screen");
-  if (result) result.style.display = "none";
-}
+  // タイトル画面を非表示
+  titleScreen.style.display = "none";
 
-export function showResult() {
-  document.getElementById("title-screen").style.display = "none";
-  document.getElementById("game-screen").style.display = "none";
-  document.getElementById("results-screen").style.display = "block";
+  // ゲーム画面を表示
+  gameScreen.style.display = "block";
+
+  // ゲーム画面のスクロール位置をリセット
+  window.scrollTo(0, 0);
 }

@@ -1,7 +1,41 @@
 /* ============================
-   画面切替（表示/非表示）
-============================ */
+   screens.css（画面切り替え）
+   ============================ */
 
-#title-screen { display: block; }   /* 最初に表示 */
-#game-screen  { display: none; }    /* ゲーム開始で表示 */
-#results-screen { display: none; }  /* 結果画面（後で実装） */
+/* タイトル画面（初期表示） */
+#title-screen {
+  display: block;          /* 初期表示 */
+  width: 100%;
+  min-height: 100vh;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* ゲーム画面（初期は非表示） */
+#game-screen {
+  display: none;           /* screens.js で切り替え */
+  width: 100%;
+  min-height: 100vh;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 表示時のフェードイン */
+.screen-show {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* 非表示時のフェードアウト */
+.screen-hide {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* スマホ対応 */
+@media (max-width: 600px) {
+  #title-screen,
+  #game-screen {
+    padding: 20px;
+  }
+}

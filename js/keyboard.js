@@ -1,18 +1,30 @@
 // ============================
-// keyboard.js（キーボード光）
+// keyboard.js（キーボード光アニメーション）
+// ============================
+// このファイルは、押されたキーを画面上のキーボードで光らせるだけの
+// シンプルで壊れにくいモジュール。
 // ============================
 
-// キーを光らせる（ゲームロジックから呼ばれる）
+
+// ------------------------------------------------------------
+// キーを光らせる関数
+// ------------------------------------------------------------
+// ・押されたキーに対応する要素を探す
+// ・一瞬だけ "active" クラスを付けて光らせる
+// ------------------------------------------------------------
 export function highlightKey(key) {
-  const upper = key.toUpperCase();
+  // 例： "a" → data-key="a"
+  const k = key.toLowerCase();
 
-  const keyEl = [...document.querySelectorAll(".key")]
-    .find(k => k.textContent.toUpperCase() === upper);
+  // 対応するキー要素を取得
+  const el = document.querySelector(`.key[data-key="${k}"]`);
+  if (!el) return; // 対応するキーが無い場合は無視
 
-  if (!keyEl) return;
+  // 光らせるクラスを付与
+  el.classList.add("active");
 
-  keyEl.classList.add("active");
+  // 150ms 後に消す（押した感を出す）
   setTimeout(() => {
-    keyEl.classList.remove("active");
+    el.classList.remove("active");
   }, 150);
 }

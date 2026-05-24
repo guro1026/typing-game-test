@@ -1,19 +1,99 @@
 /* ============================
-   基本設定（全画面共通）
-============================ */
-body {
-  margin: 0;                 /* ページの余白なし */
-  overflow: hidden;          /* スクロール禁止（ゲーム用） */
-  background: black;         /* 全画面の背景色 */
-  font-family: "Yu Gothic", sans-serif;
+   base.css（全体の基本スタイル）
+   ============================ */
+
+/* 全体のリセット（ブラウザ差異をなくす） */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* ============================
-   タイトルロゴの光アニメ（共通）
-   ※ タイトルとゲームで共通使用
-============================ */
-@keyframes glow {
-  0%   { filter: drop-shadow(0 0 8px #4cf); }
-  50%  { filter: drop-shadow(0 0 32px #9ff); }
-  100% { filter: drop-shadow(0 0 8px #4cf); }
+/* ページ全体の基本設定 */
+body {
+  font-family: "Noto Sans JP", sans-serif; /* 日本語に強いフォント */
+  background-color: #000;                  /* 黒背景（DB演出に合う） */
+  color: #fff;                             /* 白文字 */
+  overflow-x: hidden;                      /* 横スクロール禁止 */
+  user-select: none;                       /* テキスト選択禁止（ゲーム向け） */
 }
+
+/* コンテンツを中央寄せにするための共通コンテナ */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* 見出しの基本スタイル */
+h1, h2, h3 {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* ボタンの共通スタイル */
+button {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* ボタンのホバー効果 */
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* 入力欄の共通スタイル */
+input[type="text"] {
+  padding: 12px;
+  font-size: 1.2rem;
+  width: 260px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+/* エラーメッセージ */
+.error {
+  color: #ff6b6b;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+/* 音量スライダーの共通スタイル */
+input[type="range"] {
+  width: 200px;
+  margin-top: 10px;
+}
+
+/* テーブル（ランキング用） */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+table th {
+  background-color: #222;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #111;
+}
+
+/* スマホ対応（レスポンシブ） */
+@media (max-width: 600px) {
+  h1 {

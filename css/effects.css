@@ -1,10 +1,73 @@
 /* ============================
-   アニメーション（演出）
-============================ */
+   effects.css（演出エフェクト）
+   ============================ */
 
-/* キャラのオーラ脈動 */
-@keyframes auraPulse {
-  0%   { filter: drop-shadow(0 0 18px #4cf); }
-  50%  { filter: drop-shadow(0 0 32px #9ff); }
-  100% { filter: drop-shadow(0 0 18px #4cf); }
+/* ----------------------------------------
+   画面フラッシュ（白く光る演出）
+   body に .flash が付いたとき発動
+----------------------------------------- */
+body.flash {
+  animation: flashScreen 0.3s ease-out;
+}
+
+@keyframes flashScreen {
+  0% {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 1);
+  }
+}
+
+/* ----------------------------------------
+   ビーム（#beam）
+   game.css 側の beamFire と連動
+----------------------------------------- */
+#beam {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 0;
+  height: 12px;
+  background: linear-gradient(to right, #fff, #88f);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  z-index: 4;
+}
+
+/* ビーム発射アニメ（effects.js / game.js から付与） */
+#beam.beam-fire {
+  animation: beamFire 0.5s ease-out;
+}
+
+@keyframes beamFire {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  50% {
+    width: 80vw;
+    opacity: 1;
+  }
+  100% {
+    width: 100vw;
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------
+   気弾（ki-ball）脈動アニメ
+   MAX 時に pulse クラスが付く
+----------------------------------------- */
+#ki-ball.pulse {
+  animation: kiPulse 0.6s infinite alternate;
+}
+
+@keyframes kiPulse {
+  from {
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
 }

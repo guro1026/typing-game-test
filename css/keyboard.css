@@ -1,36 +1,65 @@
 /* ============================
-   キーボード（最前面）
-============================ */
+   keyboard.css（画面キーボード）
+   ============================ */
+
+/* キーボード全体のレイアウト */
 #keyboard {
-  position: absolute;
-  top: 74%;
   width: 100%;
-  text-align: center;
-  transform: scale(2, 1);        /* 横に広げる */
-  transform-origin: center center;
-  z-index: 10000;                /* UI は最前面 */
+  max-width: 900px;
+  margin: 40px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
 }
 
-/* 行ごとの余白 */
+/* 各段（row） */
 .key-row {
-  margin: 6px 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
 
-/* キーの見た目 */
+/* キー1つ1つの基本デザイン */
 .key {
-  display: inline-block;
-  min-width: 48px;
-  padding: 10px 6px;
-  margin: 2px;
-  border: 2px solid #4cf;
+  width: 50px;
+  height: 50px;
+  background-color: #222;
   border-radius: 6px;
-  background: rgba(0, 80, 255, 0.4);
-  font-size: 20px;
-  text-shadow: 0 0 6px #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+
+  border: 2px solid #444;
+  transition: 0.1s;
 }
 
-/* 押下時の光 */
+/* 押されたときの光アニメ（keyboard.js から付与） */
 .key.active {
-  background: #4cf;
-  box-shadow: 0 0 20px #4cf;
+  background-color: #00aaff;
+  border-color: #66d0ff;
+  box-shadow: 0 0 12px #66d0ff;
+  transform: scale(1.1);
+}
+
+/* スペースキーなど幅広キー */
+.key.wide {
+  width: 120px;
+}
+
+/* スマホ対応 */
+@media (max-width: 600px) {
+  .key {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .key.wide {
+    width: 80px;
+  }
 }

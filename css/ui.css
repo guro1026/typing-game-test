@@ -1,91 +1,94 @@
 /* ============================
-   UIテーマ切り替え（男女）
-   ※ レイアウトは一切変更しない
-============================ */
+   ui.css（UIテーマ：男 / 女）
+   ============================ */
 
-/* --------------------------------
-   男性UIテーマ（青）
--------------------------------- */
-.male-ui #hud {
-  color: #9df;
-  text-shadow:
-    0 0 20px #4cf,
-    0 0 40px #4cf,
-    0 0 60px #0ff;
+/* ----------------------------------------
+   男性テーマ（blue）
+   body に .theme-male が付く
+----------------------------------------- */
+.theme-male {
+  --main-color: #4da3ff;      /* 青 */
+  --sub-color:  #1e6bd6;      /* 濃い青 */
+  --glow-color: #8cc8ff;      /* 光の青 */
 }
 
-.male-ui .hud-item {
-  border: 4px solid #4cf;
-  box-shadow: 0 0 25px #4cf inset;
-  background: rgba(0, 40, 80, 0.4);
+/* タイトル文字の色 */
+.theme-male #game-title {
+  color: var(--main-color);
+  text-shadow: 0 0 12px var(--glow-color);
 }
 
-.male-ui .key {
-  border-color: #4cf;
-  background: rgba(0, 80, 255, 0.4);
+/* コースボタン */
+.theme-male .course-btn {
+  background-color: var(--main-color);
+  border: 2px solid var(--glow-color);
 }
 
-.male-ui .key.active {
-  background: #4cf;
-  box-shadow: 0 0 20px #4cf;
+/* ゲーム中の HUD */
+.theme-male #hud .hud-item {
+  color: var(--main-color);
+  text-shadow: 0 0 10px var(--glow-color);
 }
 
-.male-ui #ki-ball {
-  filter: drop-shadow(0 0 20px #4cf);
+/* 気弾の色（男：青） */
+.theme-male #ki-ball {
+  background: radial-gradient(circle, #66aaff, #0044aa);
 }
 
-/* --------------------------------
-   女性UIテーマ（ピンク）
--------------------------------- */
-.female-ui #hud {
-  color: #ffb7ef;
-  text-shadow:
-    0 0 20px #ff66cc,
-    0 0 40px #ff66cc,
-    0 0 60px #ff99dd;
+/* ----------------------------------------
+   女性テーマ（pink）
+   body に .theme-female が付く
+----------------------------------------- */
+.theme-female {
+  --main-color: #ff77c8;      /* ピンク */
+  --sub-color:  #d63a8c;      /* 濃いピンク */
+  --glow-color: #ffb3e6;      /* 光のピンク */
 }
 
-.female-ui .hud-item {
-  border: 4px solid #ff66cc;
-  box-shadow: 0 0 25px #ff66cc inset;
-  background: rgba(80, 0, 60, 0.4);
+/* タイトル文字の色 */
+.theme-female #game-title {
+  color: var(--main-color);
+  text-shadow: 0 0 12px var(--glow-color);
 }
 
-.female-ui .key {
-  border-color: #ff66cc;
-  background: rgba(255, 80, 200, 0.4);
+/* コースボタン */
+.theme-female .course-btn {
+  background-color: var(--main-color);
+  border: 2px solid var(--glow-color);
 }
 
-.female-ui .key.active {
-  background: #ff66cc;
-  box-shadow: 0 0 20px #ff66cc;
+/* ゲーム中の HUD */
+.theme-female #hud .hud-item {
+  color: var(--main-color);
+  text-shadow: 0 0 10px var(--glow-color);
 }
 
-.female-ui #ki-ball {
-  filter: drop-shadow(0 0 20px #ff66cc);
+/* 気弾の色（女：白金） */
+.theme-female #ki-ball {
+  background: radial-gradient(circle, #ffffff, #d6d6d6);
 }
 
-/* --------------------------------
-   共通UI（どちらのテーマでも使う）
--------------------------------- */
-
-/* ボタンの共通スタイル */
-.ui-button {
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
+/* ----------------------------------------
+   共通：キャラクター画像の光
+----------------------------------------- */
+#character {
+  filter: drop-shadow(0 0 12px var(--glow-color));
 }
 
-/* ホバー時の軽い光 */
-.ui-button:hover {
-  filter: brightness(1.2);
+/* ----------------------------------------
+   共通：ボタンのホバー
+----------------------------------------- */
+.theme-male button:hover,
+.theme-female button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
-/* 共通テキスト影 */
-.ui-text {
-  text-shadow:
-    0 0 4px #000,
-    0 0 8px #000;
+/* ----------------------------------------
+   スマホ対応
+----------------------------------------- */
+@media (max-width: 600px) {
+  #game-title {
+    font-size: 2.4rem;
+  }
 }
