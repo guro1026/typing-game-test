@@ -3,57 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <title>結果発表 - Typing Game</title>
-  <link rel="stylesheet" href="style.css">
+
   <style>
-    /* 結果画面専用の軽い追加CSS（位置サイズは変えない） */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: "Yu Gothic", sans-serif;
+    }
 
     #results-screen {
       width: 100vw;
       height: 100vh;
-      background: url("images/game_bg.png") center/cover no-repeat;
       color: white;
       text-align: center;
       position: relative;
       overflow: hidden;
+      background: #000; /* JSで上書きされる */
     }
 
+    /* タイトル（120px → 60px） */
     #result-title {
-      font-size: 120px;
+      font-size: 60px;
       font-weight: bold;
-      margin-top: 4%;
+      margin-top: 3%;
       text-shadow:
         0 0 20px #fff,
         0 0 40px #ff0,
         0 0 60px #ff0;
     }
 
+    /* 結果ボックス（48px → 24px） */
     .result-box {
-      margin: 20px auto;
-      padding: 20px 40px;
+      margin: 15px auto;
+      padding: 15px 30px;
       width: 60%;
-      background: rgba(0,0,0,0.5);
-      border: 4px solid #4cf;
+      background: rgba(0,0,0,0.45);
+      border: 3px solid #fff;
       border-radius: 12px;
-      font-size: 48px;
+      font-size: 24px;
       text-shadow: 0 0 10px #000;
     }
 
-    #enemy-image {
-      margin-top: 20px;
-      height: 40vh;
-      filter: drop-shadow(0 0 20px #fff);
+    /* コメント（20px） */
+    #comment-box {
+      font-size: 20px;
+      padding: 15px 25px;
+      width: 60%;
+      margin: 20px auto;
+      background: rgba(0,0,0,0.55);
+      border: 2px solid #fff;
+      border-radius: 10px;
+      text-shadow: 0 0 10px #000;
     }
 
+    /* 右上のキャラシルエット */
+    #character-image {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      height: 22vh;
+      filter: drop-shadow(0 0 20px #fff);
+      opacity: 0.9;
+    }
+
+    /* ボタン（40px → 20px） */
     #back-btn {
-      margin-top: 40px;
-      padding: 20px 40px;
-      font-size: 40px;
-      border: 3px solid #4cf;
-      background: rgba(0,80,255,0.4);
+      margin-top: 25px;
+      padding: 12px 28px;
+      font-size: 20px;
+      border: 3px solid #fff;
+      background: rgba(255,255,255,0.2);
       color: white;
       border-radius: 10px;
       cursor: pointer;
       text-shadow: 0 0 10px #000;
+    }
+
+    #back-btn:hover {
+      background: rgba(255,255,255,0.35);
     }
   </style>
 </head>
@@ -64,6 +92,9 @@
 
     <div id="result-title">RESULT</div>
 
+    <!-- 性別で切り替わるキャラシルエット（右上） -->
+    <img id="character-image" src="" alt="character">
+
     <div class="result-box">
       スコア：<span id="r-score"></span>
     </div>
@@ -73,21 +104,11 @@
     </div>
 
     <div class="result-box">
-      正確率：<span id="r-accuracy"></span>%
-    </div>
-
-    <div class="result-box">
       総タイプ数：<span id="r-total"></span>
       ／ ミス：<span id="r-miss"></span>
     </div>
 
-    <div class="result-box">
-      撃破した敵：<span id="r-enemy"></span>
-    </div>
-
-    <img id="enemy-image" src="" alt="enemy">
-
-    <div class="result-box" style="font-size:40px;">
+    <div id="comment-box">
       <span id="r-comment"></span>
     </div>
 
@@ -101,44 +122,45 @@
     // ============================
     const score = localStorage.getItem("score") || 0;
     const maxCombo = localStorage.getItem("maxCombo") || 0;
-    const accuracy = localStorage.getItem("accuracy") || 0;
     const totalTyped = localStorage.getItem("totalTyped") || 0;
     const missCount = localStorage.getItem("missCount") || 0;
-    const defeatedEnemy = localStorage.getItem("defeatedEnemy") || "？？？";
     const weaknessComment = localStorage.getItem("weaknessComment") || "";
+    const gender = localStorage.getItem("gender") || "men";
 
     // ============================
     // 表示に反映
     // ============================
     document.getElementById("r-score").textContent = score;
     document.getElementById("r-maxcombo").textContent = maxCombo;
-    document.getElementById("r-accuracy").textContent = accuracy;
     document.getElementById("r-total").textContent = totalTyped;
     document.getElementById("r-miss").textContent = missCount;
-    document.getElementById("r-enemy").textContent = defeatedEnemy;
     document.getElementById("r-comment").textContent = weaknessComment;
 
     // ============================
-    // 敵画像の自動選択
+    // 性別で背景切り替え（紺／濃赤）
     // ============================
-    const enemyImg = document.getElementById("enemy-image");
+    const resultScreen = document.getElementById("results-screen");
 
-    const enemyImages = {
-      "サイバイマン": "images/enemy_saibaiman.png",
-      "ラディッツ": "images/enemy_raditz.png",
-      "ナッパ": "images/enemy_nappa.png",
-      "ベジータ（初期）": "images/enemy_vegeta.png",
-      "フリーザ（第1形態）": "images/enemy_frieza1.png",
-      "フリーザ（最終形態）": "images/enemy_frieza_final.png",
-      "セル（完全体）": "images/enemy_cell.png",
-      "魔人ブウ（善）": "images/enemy_buu_good.png",
-      "魔人ブウ（純粋）": "images/enemy_buu_kid.png",
-      "ビルス": "images/enemy_beerus.png",
-      "破壊神クラス撃破": "images/enemy_god.png"
-    };
+    if (gender === "female") {
+      // 濃い赤（ワインレッドより深い）
+      resultScreen.style.background =
+        'linear-gradient(135deg, #7a0014, #b3001d)';
+    } else {
+      // 紺（深いネイビー）
+      resultScreen.style.background =
+        'linear-gradient(135deg, #0a1a3f, #1c2e5a)';
+    }
 
-    enemyImg.src = enemyImages[defeatedEnemy];
+    // ============================
+    // 性別でキャラシルエット切り替え（右上）
+    // ============================
+    const charImg = document.getElementById("character-image");
 
+    if (gender === "female") {
+      charImg.src = "images/character/women/silhouette_woman.png";
+    } else {
+      charImg.src = "images/character/men/silhouette_man.png";
+    }
 
     // ============================
     // タイトルへ戻る
