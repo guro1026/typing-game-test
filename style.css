@@ -167,12 +167,14 @@ body {
   position: relative;
 }
 
-/* お題（日本語） */
-#word-jp, #word-romaji {
+/* お題（日本語・ローマ字） */
+#word-jp {
   position: absolute;
-  top: 10vh;
+  top: 20vh;                     /* ← 日本語はここ */
   left: 50%;
   transform: translateX(-50%);
+  font-size: 6vw;
+  font-weight: bold;
   z-index: 8500;
   width: 100%;
   pointer-events: none;
@@ -183,15 +185,22 @@ body {
     0 0 48px #000;
 }
 
-#word-jp {
-  font-size: 6vw;
-  font-weight: bold;
+#word-romaji {
+  position: absolute;
+  top: 28vh;                     /* ← ローマ字はここ */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4vw;
+  z-index: 8500;
+  width: 100%;
+  pointer-events: none;
+  text-shadow:
+    0 0 12px #000,
+    0 0 24px #000,
+    0 0 36px #000,
+    0 0 48px #000;
 }
 
-#word-romaji {
-  font-size: 4vw;
-  margin-top: 4vh;
-}
 
 /* ファイター（キャラ＋気弾） */
 #fighter {
