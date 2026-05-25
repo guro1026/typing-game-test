@@ -193,7 +193,7 @@ function startGame() {
 const playerName = localStorage.getItem("playerName") || "";
 const character = document.getElementById("character");
 const kiBall = document.getElementById("ki-ball");
-const gameBg = document.getElementById("game-bg"); // 背景 <img> がある前提
+const bgLayer = document.getElementById("bg-layer"); // ← div 背景
 
 fetch("employee_list.csv")
   .then(res => res.text())
@@ -219,21 +219,21 @@ fetch("employee_list.csv")
     }
 
     // ============================
-    // ★ 背景画像
+    // ★ 背景（div の background-image を変更）
     // ============================
     if (gender === "female") {
-      gameBg.src = "images/bg/game_bg_woman.png";
+      bgLayer.style.backgroundImage = 'url("images/bg/game_bg_woman.png")';
     } else {
-      gameBg.src = "images/bg/game_bg_man.png";
+      bgLayer.style.backgroundImage = 'url("images/bg/game_bg_man.png")';
     }
 
     // ============================
-    // ★ 気弾の色（画像切り替え）
+    // ★ 気弾（div の background-image を変更）
     // ============================
     if (gender === "female") {
-      kiBall.src = "images/kiball/pink.png";
+      kiBall.style.backgroundImage = 'url("images/kiball/pink.png")';
     } else {
-      kiBall.src = "images/kiball/blue.png";
+      kiBall.style.backgroundImage = 'url("images/kiball/blue.png")';
     }
   });
 
