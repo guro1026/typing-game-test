@@ -170,10 +170,10 @@ body {
 /* お題（日本語・ローマ字） */
 #word-jp {
   position: absolute;
-  top: 20vh;                     /* ← 日本語はここ */
+  top: 10vh;                     /* ← 日本語はここ */
   left: 50%;
   transform: translateX(-50%);
-  font-size: 6vw;
+  font-size: 4vw;
   font-weight: bold;
   z-index: 8500;
   width: 100%;
@@ -187,10 +187,10 @@ body {
 
 #word-romaji {
   position: absolute;
-  top: 28vh;                     /* ← ローマ字はここ */
+  top: 30vh;                     /* ← ローマ字はここ */
   left: 50%;
   transform: translateX(-50%);
-  font-size: 4vw;
+  font-size: 2vw;
   z-index: 8500;
   width: 100%;
   pointer-events: none;
