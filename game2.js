@@ -523,7 +523,7 @@ function getWeaknessComment(accuracy, v, c, y) {
 // ============================
 async function saveScoreToSupabase(data) {
   try {
-    const { error } = await supabase.from("scores").insert(data);
+    const { error } = await client.from("scores").insert(data);
     if (error) console.error("Supabase 保存エラー:", error);
   } catch (e) {
     console.error("Supabase 通信エラー:", e);
