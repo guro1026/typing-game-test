@@ -208,18 +208,17 @@ fetch("employee_list.csv")
       }
     }
 
-    // ★ kamehameha 画像を使う
+    // ★ 男女とも kiball に統一
     if (gender === "female") {
-      character.src = "images/character/women/kamehameha_woman.png";
+      character.src = "images/character/women/kiball_woman.png";
       kiBall.classList.remove("blue");
       kiBall.classList.add("pink");
     } else {
-      character.src = "images/character/men/kamehameha_man.png";
+      character.src = "images/character/men/kiball_man.png";
       kiBall.classList.remove("pink");
       kiBall.classList.add("blue");
     }
   });
-
 
   // 各種ステータス初期化
   score = 0;
