@@ -203,13 +203,16 @@ fetch("employee_list.csv")
     const lines = text.trim().split("\n").slice(1);
     let gender = "male";
 
-    for (const line of lines) {
-      const [name, g] = line.split(",").map(s => s.trim());
-      if (name === playerName) {
-        gender = g;
-        break;
-      }
-    }
+for (const line of lines) {
+  const [name, g] = line.split(",").map(s => s.trim());
+  if (name === playerName) {
+    gender = g;
+    break;
+  }
+}
+
+// ★ 結果画面用に性別を保存（これが無かった）
+localStorage.setItem("gender", gender);
 
 	// ★ キャラ画像
 	if (gender === "female") {
