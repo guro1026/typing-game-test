@@ -208,13 +208,13 @@ fetch("employee_list.csv")
       }
     }
 
-    // ★ 正しいパスに修正
+    // ★ kamehameha 画像を使う
     if (gender === "female") {
-      character.src = "images/character/character_Woman.png";
+      character.src = "images/character/women/kamehameha_woman.png";
       kiBall.classList.remove("blue");
       kiBall.classList.add("pink");
     } else {
-      character.src = "images/character/character_men.png";
+      character.src = "images/character/men/kamehameha_man.png";
       kiBall.classList.remove("pink");
       kiBall.classList.add("blue");
     }
