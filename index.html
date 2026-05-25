@@ -1,79 +1,149 @@
-<!-- ============================================================
-     index.html（タイトル画面）
-     - 名前入力
-     - 性別選択（男 / 女）
-     - コース選択（EASY / NORMAL / HARD）
-     - ゲーム開始前の入口
-     ============================================================ -->
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>Typing Battle - Title</title>
+  <meta charset="UTF-8">
+  <title>Typing Game</title>
 
-  <!-- ============================
-       CSS 読み込み
-       ============================ -->
-  <!-- 全体の初期設定（フォント・リセット） -->
-  <link rel="stylesheet" href="css/base.css">
-
-  <!-- 共通UI（ボタン・テーマカラー） -->
-  <link rel="stylesheet" href="css/ui.css">
-
-  <!-- 画面レイアウト（中央寄せなど） -->
-  <link rel="stylesheet" href="css/screens.css">
+  <!-- style.css（あなたの巨大CSS）を読み込む -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
-<!-- body に theme-male / theme-female が付く（初期は male） -->
-<body class="theme-male">
+<body>
 
-  <!-- ============================================================
-       タイトル画面
-       ============================================================ -->
-  <div id="title-screen" class="screen">
+  <!-- ============================
+       タイトル画面（最初に表示）
+  ============================ -->
+  <div id="title-screen">
 
-    <!-- ゲームタイトル -->
-    <h1>Typing Battle</h1>
+    <!-- キラキラ背景レイヤー -->
+    <div id="bg-layer"></div>
 
-    <!-- 名前入力エリア -->
-    <div class="input-area">
-      <!-- 名前入力欄 -->
-      <input id="name-input" type="text" placeholder="名前を入力" />
+    <!-- タイトル左：女性キャラ -->
+    <img id="title-girl" src="images/character_Woman.png">
 
-      <!-- エラーメッセージ表示欄 -->
-      <div id="name-error" style="color: #ff6666; height: 20px;"></div>
+    <!-- タイトル右：男性キャラ -->
+    <img id="title-boy" src="images/character_men.png">
 
-      <!-- 名前決定ボタン -->
-      <button id="name-submit">名前を決定</button>
+    <!-- タイトルロゴ -->
+    <img id="title-main" src="images/title_main.png">
+
+    <!-- サブタイトル -->
+    <div id="title-subtext">
+      タイピングで気を高めろ！
     </div>
 
-    <!-- 性別選択ボタン -->
-    <div style="margin-top: 20px;">
-      <button class="gender-btn" data-gender="male">男性</button>
-      <button class="gender-btn" data-gender="female">女性</button>
+    <!-- ============================
+         名前入力エリア
+         ※ JS の最新仕様に合わせて placeholder 修正済み
+    ============================ -->
+    <div id="name-area">
+      <div id="name-error"></div>
+
+      <!-- 名前入力（自由入力） -->
+      <input id="name-input" placeholder="名前を入力">
+
+      <!-- 決定ボタン -->
+      <button id="name-submit">決定</button>
     </div>
 
-    <!-- コース選択（名前が決まってから押せる） -->
-    <div class="course-buttons">
+    <!-- ============================
+         コース選択（名前決定後に表示）
+    ============================ -->
+    <div id="course-buttons" style="display:none;">
       <button class="course-btn" data-course="easy">EASY</button>
-      <button class="course-btn" data-course="normal">NORMAL</button>
-      <button class="course-btn" data-course="hard">HARD</button>
+      <button class="course-btn" data-course="business">BUSINESS</button>
+      <button class="course-btn" data-course="it">IT</button>
+      <button class="course-btn" data-course="mail">MAIL</button>
     </div>
 
-  </div>
+    <!-- ============================
+         タイトル画面の音量調整
+    ============================ -->
+    <div id="volume-area">
+      <div id="volume-label">BGM</div>
 
-  <!-- ============================================================
-       JS 読み込み
-       ============================================================ -->
-  <!-- 性別選択・初期化 -->
-  <script type="module" src="js/main.js"></script>
+      <!-- range: 0〜100 -->
+      <input id="volume-slider" type="range" min="0" max="100" value="0">
+    </div>
 
-  <!-- 画面遷移（タイトル → ゲーム） -->
-  <script type="module" src="js/screens.js"></script>
+  </div> <!-- /title-screen -->
 
-  <!-- UI テーマ切り替え -->
-  <script type="module" src="js/ui.js"></script>
+  <!-- ============================
+       ゲーム画面（開始後に表示）
+  ============================ -->
+  <div id="game-screen">
+
+    <!-- お題（日本語・ローマ字） -->
+    <div id="word-jp"></div>
+    <div id="word-romaji"></div>
+
+    <!-- ============================
+         ファイター（キャラ＋気弾）
+    ============================ -->
+    <div id="fighter">
+
+      <!-- キャラ画像（男性キャラ初期） -->
+      <img id="character" src="images/character_men_kiball.png">
+
+      <!-- 気弾（男性は blue、女性は JS で pink に切替） -->
+      <img id="ki-ball" src="images/kiball_blue.png" class="blue">
+
+    </div>
+
+    <!-- ビーム（ゲーム終了時に発射） -->
+    <div id="beam"></div>
+
+    <!-- ============================
+         HUD（スコア・タイム・コンボ）
+    ============================ -->
+    <div id="hud">
+      <div class="hud-item">TIME: <span id="hud-time">60</span></div>
+      <div class="hud-item">SCORE: <span id="hud-score">0</span></div>
+      <div class="hud-item">COMBO: <span id="hud-combo">0</span></div>
+    </div>
+
+    <!-- ============================
+         キーボード（光演出あり）
+    ============================ -->
+    <div id="keyboard">
+
+      <!-- 1段目 -->
+      <div class="key-row">
+        <div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div><div class="key">T</div>
+        <div class="key">Y</div><div class="key">U</div><div class="key">I</div><div class="key">O</div><div class="key">P</div>
+      </div>
+
+      <!-- 2段目 -->
+      <div class="key-row">
+        <div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key">F</div><div class="key">G</div>
+        <div class="key">H</div><div class="key">J</div><div class="key">K</div><div class="key">L</div>
+      </div>
+
+      <!-- 3段目 -->
+      <div class="key-row">
+        <div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key">V</div>
+        <div class="key">B</div><div class="key">N</div><div class="key">M</div>
+      </div>
+
+    </div>
+
+    <!-- ============================
+         ゲーム中の音量調整
+    ============================ -->
+    <div id="volume-area-game">
+      <div id="volume-label-game">BGM</div>
+
+      <!-- range: 0〜100 -->
+      <input id="volume-slider-game" type="range" min="0" max="100" value="0">
+    </div>
+
+  </div> <!-- /game-screen -->
+
+  <!-- ============================
+       ゲーム本体の JS
+       ※ 最新版（Part1〜3統合版）を読み込む
+  ============================ -->
+  <script src="game2.js"></script>
 
 </body>
 </html>
