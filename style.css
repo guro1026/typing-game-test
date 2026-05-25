@@ -158,10 +158,12 @@ body {
    ゲーム画面
 ============================================================ */
 #game-screen {
-  display: none;               /* ゲーム開始まで非表示 */
+  display: none;
   width: 100vw;
   height: 100vh;
-  background: url("images/bg/game_bg.png") center/cover no-repeat;
+  /* ★ これを削除する（最重要） */
+  /* background: url("images/bg/game_bg.png") center/cover no-repeat; */
+
   color: white;
   text-align: center;
   position: relative;
