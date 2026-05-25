@@ -258,7 +258,7 @@ body {
     drop-shadow(0 0 50px #ffb6e6);
 }
 
-/* 覚醒パルス（JSと競合しないscaleのみ） */
+/* 覚醒パルス（JSと競合しないscaleのみ） 
 .pulse {
   animation: pulseAnim 0.8s infinite ease-in-out;
 }
@@ -268,7 +268,7 @@ body {
   50%  { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
-
+*/
 /* ビーム（発射アニメ） */
 #beam {
   position: absolute;

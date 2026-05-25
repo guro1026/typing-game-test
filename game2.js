@@ -380,11 +380,11 @@ document.addEventListener("keydown", e => {
     updateHUD();
 
     // 覚醒時の気弾光演出
-    if (willClear && (nextCombo === 10 || nextCombo === 15 || nextCombo === 20)) {
-      const ball = document.getElementById("ki-ball");
-      ball.classList.add("pulse");
-      setTimeout(() => ball.classList.remove("pulse"), 300);
-    }
+ //  if (willClear && (nextCombo === 10 || nextCombo === 15 || nextCombo === 20)) {
+ //     const ball = document.getElementById("ki-ball");
+ //     ball.classList.add("pulse");
+ //     setTimeout(() => ball.classList.remove("pulse"), 300);
+ //   }
 
     // ============================
     // お題クリア
@@ -451,10 +451,18 @@ function updateKiBall() {
 
 // お題クリア時に少し成長
 function growKi() {
-  kiPower += 0.5;
+
+  // ★ 1回目のコンボだけ 1cm 成長（scale +0.03 相当）
+  if (combo === 1) {
+    kiPower += 6;   // 6 → scale 約 +0.03（約1cm）
+  } else {
+    kiPower += 0.5; // それ以降は従来通り
+  }
+
   if (kiPower > 100) kiPower = 100;
   updateKiBall();
 }
+
 
 // ============================
 // ビーム演出（ゲーム終了時）
