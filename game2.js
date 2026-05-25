@@ -65,7 +65,7 @@ let missYouon = 0;            // 拗音系ミス数（ここでは 'y' を含む
 // ============================
 // BGM
 // ============================
-const bgm = new Audio("sounds/BGM.mp3");
+const bgm = new Audio("sounds/bgm.mp3");
 bgm.loop = true;
 bgm.volume = 0;
 
