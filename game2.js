@@ -1,23 +1,53 @@
 // ============================
 // Supabase 初期化
 // ============================
-// あなたの Supabase プロジェクトの URL と Publishable Key（anon key）
+
+// ▼ Supabase プロジェクトの URL（あなた専用のエンドポイント）
+//   Supabase の「プロジェクト設定 → API」から取得したもの。
+//   ここは絶対に変更しない。
 const SUPABASE_URL = "https://bznzxcllyocfairwjzzk.supabase.co";
+
+// ▼ Publishable Key（anon key）
+//   公開しても問題ないキー（RLS が有効なら安全）。
+//   フロントエンドから INSERT / SELECT を行うために使用。
 const SUPABASE_KEY = "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e";
 
-// グローバルな Supabase クライアントを作成
-// ※ index.html 側で supabase-js が読み込まれている前提
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ▼ Supabase クライアント作成
+//   - index.html 側で supabase-js（CDN）が読み込まれている前提
+//   - window.supabase を上書きしないように、変数名は client にする
+//   - createClient() が undefined の場合は「読み込み順」が間違っている
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
 
 // ============================
-// 状態管理
+// 状態管理（ゲーム全体の進行を管理）
 // ============================
-let state = "title";          // 画面状態（title / loading / playing / end）
-let selectedCourse = null;    // 選択されたコース
-let words = [];               // CSVから読み込んだお題リスト
-let currentJP = "";           // 現在表示中の日本語
-let currentRomaji = "";       // 現在入力中のローマ字（残り）
-let originalRomaji = "";      // お題の元のローマ字（弱点分析などに使う想定）
+
+// ▼ 現在の画面状態
+//   title   : タイトル画面
+//   loading : CSV読み込み中
+//   playing : ゲーム中
+//   end     : 結果画面
+let state = "title";
+
+// ▼ 選択されたコース（easy / business / it / mail）
+let selectedCourse = null;
+
+// ▼ CSVから読み込んだお題リスト（{jp, romaji} の配列）
+let words = [];
+
+// ▼ 現在表示中の日本語（画面上に出ているお題）
+let currentJP = "";
+
+// ▼ 現在入力すべきローマ字（残り）
+//   例：originalRomaji = "konnichiwa"
+//       currentRomaji  = "nniichiwa"（k を入力した後）
+let currentRomaji = "";
+
+// ▼ お題の元のローマ字（弱点分析などに使う想定）
+//   currentRomaji は減っていくので、元データを保持しておく
+let originalRomaji = "";
 
 let score = 0;                // スコア
 let combo = 0;                // 現在コンボ数（お題クリア数ベース）
