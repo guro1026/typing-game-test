@@ -67,11 +67,15 @@
   <!-- ============================
        ゲーム画面
   ============================ -->
-  <div id="game-screen">
+<div id="game-screen">
 
-    <!-- お題（日本語・ローマ字） -->
-    <div id="word-jp"></div>
-    <div id="word-romaji"></div>
+  <!-- ★ これを追加 -->
+  <div id="bg-layer"></div>
+
+  <!-- お題 -->
+  <div id="word-jp"></div>
+  <div id="word-romaji"></div>
+
 
     <!-- ============================
          ファイター（キャラ＋気弾）
@@ -82,7 +86,8 @@
       <img id="character" src="images/character/men/kiball_man.png">
 
       <!-- 気弾（男性は blue、女性は JS で pink に切替） -->
-      <img id="ki-ball" src="images/kiball/blue.png" class="blue">
+      <div id="ki-ball" class="blue"></div>
+
 
     </div>
 
