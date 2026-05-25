@@ -203,33 +203,34 @@ fetch("employee_list.csv")
     const lines = text.trim().split("\n").slice(1);
     let gender = "male";
 
-for (const line of lines) {
-  const [name, g] = line.split(",").map(s => s.trim());
-  if (name === playerName) {
-    gender = g;
-    break;
-  }
-}
+    for (const line of lines) {
+      const [name, g] = line.split(",").map(s => s.trim());
+      if (name === playerName) {
+        gender = g;
+        break;
+      }
+    }
 
-// ★ 結果画面用に性別を保存（これが無かった）
-localStorage.setItem("gender", gender);
+    // ★★★ ここに移動する（fetch の中）
+    localStorage.setItem("gender", gender);
 
-	// ★ キャラ画像
-	if (gender === "female") {
-	  character.src = "images/character/women/kiball_woman.png";
-	  document.body.classList.add("pink-theme");
-	} else {
-	  character.src = "images/character/men/kiball_man.png";
-	  document.body.classList.remove("pink-theme");
-	}
-    // ★ 背景（div の background-image）
+    // ★ キャラ画像
+    if (gender === "female") {
+      character.src = "images/character/women/kiball_woman.png";
+      document.body.classList.add("pink-theme");
+    } else {
+      character.src = "images/character/men/kiball_man.png";
+      document.body.classList.remove("pink-theme");
+    }
+
+    // ★ 背景
     if (gender === "female") {
       bgLayer.style.backgroundImage = 'url("images/bg/game_bg_woman.png")';
     } else {
       bgLayer.style.backgroundImage = 'url("images/bg/game_bg_man.png")';
     }
 
-    // ★ 気弾（div の background-image）
+    // ★ 気弾
     if (gender === "female") {
       kiBall.style.backgroundImage = 'url("images/kiball/pink.png")';
     } else {
