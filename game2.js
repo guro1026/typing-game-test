@@ -211,13 +211,14 @@ fetch("employee_list.csv")
       }
     }
 
-    // ★ キャラ画像
-    if (gender === "female") {
-      character.src = "images/character/women/kiball_woman.png";
-    } else {
-      character.src = "images/character/men/kiball_man.png";
-    }
-
+	// ★ キャラ画像
+	if (gender === "female") {
+	  character.src = "images/character/women/kiball_woman.png";
+	  document.body.classList.add("pink-theme");
+	} else {
+	  character.src = "images/character/men/kiball_man.png";
+	  document.body.classList.remove("pink-theme");
+	}
     // ★ 背景（div の background-image）
     if (gender === "female") {
       bgLayer.style.backgroundImage = 'url("images/bg/game_bg_woman.png")';

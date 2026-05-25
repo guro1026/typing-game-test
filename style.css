@@ -364,3 +364,28 @@ body.flash {
   50%  { filter: drop-shadow(0 0 32px #9ff); }
   100% { filter: drop-shadow(0 0 8px #4cf); }
 }
+/* ============================
+   ★ 女性テーマ（pink-theme）
+============================ */
+body.pink-theme #hud {
+  color: #ffb6e6;
+  text-shadow:
+    0 0 20px #ff66cc,
+    0 0 40px #ff99dd,
+    0 0 60px #ffb6e6;
+}
+
+body.pink-theme .hud-item {
+  border: 4px solid #ff66cc;
+  box-shadow: 0 0 25px #ff99dd inset;
+}
+
+body.pink-theme .key {
+  border: 2px solid #ff66cc;
+  background: rgba(255, 80, 200, 0.4);
+}
+
+body.pink-theme .key.active {
+  background: #ff66cc;
+  box-shadow: 0 0 20px #ff66cc;
+}
