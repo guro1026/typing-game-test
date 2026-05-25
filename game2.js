@@ -187,6 +187,39 @@ function startGame() {
   // 画面切り替え：タイトル → ゲーム
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
+  // ============================
+  // ★ 名前から性別を判定してキャラを切り替える
+  // ============================
+  const playerName = localStorage.getItem("playerName") || "";
+  const character = document.getElementById("character");
+  const kiBall = document.getElementById("ki-ball");
+
+  // CSV 読み込み
+  fetch("employee_list.csv")
+    .then(res => res.text())
+    .then(text => {
+      const lines = text.trim().split("\n").slice(1); // ヘッダー除去
+      let gender = "male"; // デフォルト
+
+      for (const line of lines) {
+        const [name, g] = line.split(",").map(s => s.trim());
+        if (name === playerName) {
+          gender = g;
+          break;
+        }
+      }
+
+      // キャラ切り替え
+      if (gender === "female") {
+        character.src = "images/character/female.png";
+        kiBall.classList.remove("blue");
+        kiBall.classList.add("pink");
+      } else {
+        character.src = "images/character/male.png";
+        kiBall.classList.remove("pink");
+        kiBall.classList.add("blue");
+      }
+    });
 
   // 各種ステータス初期化
   score = 0;
