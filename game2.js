@@ -188,11 +188,12 @@ function startGame() {
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
 // ============================
-// ★ 名前から性別を判定してキャラを切り替える
+// ★ 名前から性別を判定してキャラ・背景・気弾を切り替える
 // ============================
 const playerName = localStorage.getItem("playerName") || "";
 const character = document.getElementById("character");
 const kiBall = document.getElementById("ki-ball");
+const gameBg = document.getElementById("game-bg"); // 背景 <img> がある前提
 
 fetch("employee_list.csv")
   .then(res => res.text())
@@ -208,15 +209,31 @@ fetch("employee_list.csv")
       }
     }
 
-    // ★ 男女とも kiball に統一
+    // ============================
+    // ★ キャラ画像
+    // ============================
     if (gender === "female") {
       character.src = "images/character/women/kiball_woman.png";
-      kiBall.classList.remove("blue");
-      kiBall.classList.add("pink");
     } else {
       character.src = "images/character/men/kiball_man.png";
-      kiBall.classList.remove("pink");
-      kiBall.classList.add("blue");
+    }
+
+    // ============================
+    // ★ 背景画像
+    // ============================
+    if (gender === "female") {
+      gameBg.src = "images/bg/game_bg_woman.png";
+    } else {
+      gameBg.src = "images/bg/game_bg_man.png";
+    }
+
+    // ============================
+    // ★ 気弾の色（画像切り替え）
+    // ============================
+    if (gender === "female") {
+      kiBall.src = "images/kiball/pink.png";
+    } else {
+      kiBall.src = "images/kiball/blue.png";
     }
   });
 
