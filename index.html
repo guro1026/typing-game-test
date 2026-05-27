@@ -10,38 +10,25 @@
 
 <body>
 
-  <!-- ============================================================
+  <!-- ============================
        タイトル画面
-  ============================================================ -->
+  ============================ -->
   <div id="title-screen">
 
-    <!-- キラキラ背景 -->
     <div id="bg-layer"></div>
 
-    <!-- タイトル左：女性キャラ -->
     <img id="title-girl" src="images/character/women/stand_woman.png">
-
-    <!-- タイトル右：男性キャラ -->
     <img id="title-boy" src="images/character/men/stand_man.png">
-
-    <!-- タイトルロゴ -->
     <img id="title-main" src="images/ui/title_bg.png">
 
-    <!-- サブタイトル -->
     <div id="title-subtext">タイピングで気を高めろ！</div>
 
-    <!-- ============================================================
-         名前入力エリア
-    ============================================================ -->
     <div id="name-area">
       <div id="name-error"></div>
       <input id="name-input" placeholder="名前を入力">
       <button id="name-submit">決定</button>
     </div>
 
-    <!-- ============================================================
-         コース選択（名前決定後に表示）
-    ============================================================ -->
     <div id="course-buttons" style="display:none;">
       <button class="course-btn" data-course="easy">EASY</button>
       <button class="course-btn" data-course="business">BUSINESS</button>
@@ -51,88 +38,60 @@
 
   </div> <!-- /title-screen -->
 
-  <!-- ============================================================
+  <!-- ============================
        ゲーム画面
-  ============================================================ -->
+  ============================ -->
   <div id="game-screen">
 
-    <!-- ゲーム背景（タイトルと同じIDだが CSS で分離管理） -->
     <div id="bg-layer"></div>
 
-    <!-- お題 -->
     <div id="word-jp"></div>
     <div id="word-romaji"></div>
 
-    <!-- ============================================================
-         ファイター（キャラ＋気弾）
-    ============================================================ -->
     <div id="fighter">
-
-      <!-- キャラ画像 -->
       <img id="character" src="images/character/men/kiball_man.png">
-
-      <!-- 気弾（男性は blue、女性は JS で pink に切替） -->
       <div id="ki-ball" class="blue"></div>
-
     </div>
 
-    <!-- ビーム（ゲーム終了時に発射） -->
     <div id="beam"></div>
 
-    <!-- ============================================================
-         HUD（スコア・タイム・コンボ）
-    ============================================================ -->
     <div id="hud">
       <div class="hud-item">TIME: <span id="hud-time">60</span></div>
       <div class="hud-item">SCORE: <span id="hud-score">0</span></div>
       <div class="hud-item">COMBO: <span id="hud-combo">0</span></div>
     </div>
 
-    <!-- ============================================================
-         キーボード（光演出あり）
-    ============================================================ -->
     <div id="keyboard">
-
-      <!-- 1段目 -->
       <div class="key-row">
         <div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div><div class="key">T</div>
         <div class="key">Y</div><div class="key">U</div><div class="key">I</div><div class="key">O</div><div class="key">P</div>
       </div>
 
-      <!-- 2段目 -->
       <div class="key-row">
         <div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key">F</div><div class="key">G</div>
         <div class="key">H</div><div class="key">J</div><div class="key">K</div><div class="key">L</div>
       </div>
 
-      <!-- 3段目 -->
       <div class="key-row">
         <div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key">V</div>
         <div class="key">B</div><div class="key">N</div><div class="key">M</div>
       </div>
-
     </div>
 
   </div> <!-- /game-screen -->
 
   <!-- ============================================================
-       🎵 BGMスライダー（常に表示・常に右下・最前面）
-       ※ タイトルとゲーム画面で共通
-       ※ DOMの最後に置くことで透明壁問題を完全解決
+       🎵 BGMスライダー（1つに統合・常に右下・最前面）
   ============================================================ -->
   <div id="volume-area">
     <div id="volume-label">BGM</div>
     <input id="volume-slider" type="range" min="0" max="100" value="0">
   </div>
 
-  <!-- ============================================================
-       Supabase（必須）
-  ============================================================ -->
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- ============================================================
-       ゲーム本体の JS
-  ============================================================ -->
+  <!-- ゲーム本体 -->
   <script type="module" src="game2.js"></script>
 
 </body>
