@@ -93,7 +93,7 @@ let missYouon = 0;            // 拗音系ミス数（ここでは 'y' を含む
 // ============================
 const bgm = new Audio("sounds/bgm.mp3");
 bgm.loop = true;
-bgm.volume = 0.5; // ← 初期音量を 50% に変更
+bgm.volume = 0.01; // ← 初期ミュート風（Chrome対策）
 
 // 自動再生ブロック対策：ユーザー操作があるまで待つ
 bgm.play().catch(() => {
@@ -110,15 +110,13 @@ bgm.play().catch(() => {
 // BGMスライダー（1つだけ）
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
-
-  // HTMLに存在する唯一のスライダー
   const volumeSlider = document.getElementById("volume-slider");
 
-  // 念のための安全チェック（nullならエラーを出して止める）
-  if (!volumeSlider) {
-    console.error("volume-slider が見つからない！");
-    return;
-  }
+  volumeSlider.addEventListener("input", () => {
+    const vol = volumeSlider.value / 100;
+    bgm.volume = vol;
+  });
+});
 
   // スライダー操作でBGM音量を変更
   volumeSlider.addEventListener("input", () => {
