@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <title>結果発表 - Typing Game</title>
 
+  <!-- ===============================================
+       🔰 Supabase SDK 読み込み（これが無いと supabase が undefined になる）
+       - game2.js と同じく、results.html でも Supabase を使うために必須
+       =============================================== -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     body {
       margin: 0;
@@ -22,7 +28,6 @@
       background: #000; /* JSで上書きされる */
     }
 
-    /* タイトル（120px → 60px） */
     #result-title {
       font-size: 60px;
       font-weight: bold;
@@ -33,7 +38,6 @@
         0 0 60px #ff0;
     }
 
-    /* 結果ボックス（48px → 24px） */
     .result-box {
       margin: 15px auto;
       padding: 15px 30px;
@@ -45,7 +49,6 @@
       text-shadow: 0 0 10px #000;
     }
 
-    /* コメント（20px） */
     #comment-box {
       font-size: 20px;
       padding: 15px 25px;
@@ -57,7 +60,6 @@
       text-shadow: 0 0 10px #000;
     }
 
-    /* 右上のキャラシルエット */
     #character-image {
       position: absolute;
       top: 20px;
@@ -67,7 +69,6 @@
       opacity: 0.9;
     }
 
-    /* ボタン（40px → 20px） */
     #back-btn {
       margin-top: 25px;
       padding: 12px 28px;
@@ -116,46 +117,60 @@
 
   </div>
 
-  
- <script type="module">
-// ===============================================
-// 🔰 Supabase 初期化（results.html 用）
-// ===============================================
+  <!-- ===============================================
+       🔰 メインスクリプト（module 必須）
+       - config.json の読み込み
+       - Supabase 初期化
+       - 結果画面の表示処理
+       =============================================== -->
+  <script type="module">
 
-// ▼ Supabase の URL と KEY（最初は空）
-let SUPABASE_URL = "";
-let SUPABASE_KEY = "";
+    // ===============================================
+    // 🔰 Supabase 初期化（results.html 用）
+    // ===============================================
 
-// ▼ Supabase クライアント
-let client = null;
+    // ▼ Supabase の URL と KEY（最初は空）
+    //   config.json を読み込んだ後にセットされる
+    let SUPABASE_URL = "";
+    let SUPABASE_KEY = "";
 
-// ---------------------------------------------------------------
-// 📌 config.json を読み込んで dev / prod を自動切り替え
-// ---------------------------------------------------------------
-async function loadConfig() {
-  try {
-    const res = await fetch("config.json");
-    const config = await res.json();
+    // ▼ Supabase クライアント（DB操作の本体）
+    let client = null;
 
-    const env = config.env; // "dev" or "prod"
+    // ---------------------------------------------------------------
+    // 📌 config.json を読み込んで dev / prod を自動切り替え
+    // ---------------------------------------------------------------
+    async function loadConfig() {
+      try {
+        // config.json を取得
+        const res = await fetch("config.json");
 
-    SUPABASE_URL = config.supabase[env].url;
-    SUPABASE_KEY = config.supabase[env].key;
+        // JSON に変換
+        const config = await res.json();
 
-    client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // env = "dev" or "prod"
+        const env = config.env;
 
-    console.log(`Supabase 初期化完了（${env} 環境）`);
-  } catch (e) {
-    console.error("config.json 読み込みエラー:", e);
-  }
-}
+        // env に応じて URL と KEY をセット
+        SUPABASE_URL = config.supabase[env].url;
+        SUPABASE_KEY = config.supabase[env].key;
 
-// ▼ 最初に必ず実行
-await loadConfig();
+        // Supabase クライアント作成
+        client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ============================
-    // localStorage から結果を取得
-    // ============================
+        console.log(`Supabase 初期化完了（${env} 環境）`);
+      } catch (e) {
+        console.error("config.json 読み込みエラー:", e);
+      }
+    }
+
+    // ▼ 最初に必ず実行（これが無いと Supabase が使えない）
+    await loadConfig();
+
+
+    // ===============================================
+    // 🔰 localStorage から結果を取得
+    // ===============================================
     const score = localStorage.getItem("score") || 0;
     const maxCombo = localStorage.getItem("maxCombo") || 0;
     const totalTyped = localStorage.getItem("totalTyped") || 0;
@@ -163,33 +178,33 @@ await loadConfig();
     const weaknessComment = localStorage.getItem("weaknessComment") || "";
     const gender = localStorage.getItem("gender") || "men";
 
-    // ============================
-    // 表示に反映
-    // ============================
+    // ===============================================
+    // 🔰 結果を画面に反映
+    // ===============================================
     document.getElementById("r-score").textContent = score;
     document.getElementById("r-maxcombo").textContent = maxCombo;
     document.getElementById("r-total").textContent = totalTyped;
     document.getElementById("r-miss").textContent = missCount;
     document.getElementById("r-comment").textContent = weaknessComment;
 
-    // ============================
-    // 性別で背景切り替え（紺／濃赤）
-    // ============================
+    // ===============================================
+    // 🔰 性別で背景色を切り替え
+    // ===============================================
     const resultScreen = document.getElementById("results-screen");
 
     if (gender === "female") {
-      // 濃い赤（ワインレッドより深い）
+      // 女性 → 赤系
       resultScreen.style.background =
         'linear-gradient(135deg, #7a0014, #b3001d)';
     } else {
-      // 紺（深いネイビー）
+      // 男性 → 紺系
       resultScreen.style.background =
         'linear-gradient(135deg, #0a1a3f, #1c2e5a)';
     }
 
-    // ============================
-    // 性別でキャラシルエット切り替え（右上）
-    // ============================
+    // ===============================================
+    // 🔰 性別でキャラシルエット切り替え
+    // ===============================================
     const charImg = document.getElementById("character-image");
 
     if (gender === "female") {
@@ -198,12 +213,13 @@ await loadConfig();
       charImg.src = "images/character/men/silhouette_man.png";
     }
 
-    // ============================
-    // タイトルへ戻る
-    // ============================
+    // ===============================================
+    // 🔰 タイトルへ戻るボタン
+    // ===============================================
     document.getElementById("back-btn").addEventListener("click", () => {
       location.href = "index.html";
     });
+
   </script>
 
 </body>
