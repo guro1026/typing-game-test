@@ -106,9 +106,28 @@ bgm.play().catch(() => {
   document.addEventListener("keydown", once);
 });
 
-// 音量スライダー（タイトル画面とゲーム画面で同期）
-const volumeSliderTitle = document.getElementById("volume-slider");
-const volumeSliderGame = document.getElementById("volume-slider-game");
+// ===============================
+// BGMスライダー（1つだけ）
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+
+  // HTMLに存在する唯一のスライダー
+  const volumeSlider = document.getElementById("volume-slider");
+
+  // 念のための安全チェック（nullならエラーを出して止める）
+  if (!volumeSlider) {
+    console.error("volume-slider が見つからない！");
+    return;
+  }
+
+  // スライダー操作でBGM音量を変更
+  volumeSlider.addEventListener("input", () => {
+    const vol = volumeSlider.value / 100;
+    bgm.volume = vol;
+  });
+
+});
+
 
 // 音量を同期させる関数
 function syncVolumeSlider(v) {
