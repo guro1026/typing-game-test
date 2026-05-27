@@ -1,23 +1,49 @@
-// ============================
-// Supabase 初期化
-// ============================
+// ===============================================
+// 🔰 Supabase 初期化パート（超ていねいコメント付き）
+// ===============================================
 
-// ▼ Supabase プロジェクトの URL（あなた専用のエンドポイント）
-//   Supabase の「プロジェクト設定 → API」から取得したもの。
-//   ここは絶対に変更しない。
-const SUPABASE_URL = "https://bznzxcllyocfairwjzzk.supabase.co";
+// ▼ Supabase の URL と KEY を入れる変数（最初は空っぽ）
+let SUPABASE_URL = "";
+let SUPABASE_KEY = "";
 
-// ▼ Publishable Key（anon key）
-//   公開しても問題ないキー（RLS が有効なら安全）。
-//   フロントエンドから INSERT / SELECT を行うために使用。
-const SUPABASE_KEY = "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e";
+// ▼ Supabase に接続するための「client」
+//   これが完成すると、DBに保存したり読み込んだりできるようになる
+let client = null;
 
-// ▼ Supabase クライアント作成
-//   - index.html 側で supabase-js（CDN）が読み込まれている前提
-//   - window.supabase を上書きしないように、変数名は client にする
-//   - createClient() が undefined の場合は「読み込み順」が間違っている
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ---------------------------------------------------------------
+// 📌 config.json を読み込んで、環境（dev / prod）に合わせて
+//    Supabase の URL と KEY を自動でセットする関数
+// ---------------------------------------------------------------
+async function loadConfig() {
+  try {
+    // ▼ config.json を読み込む（fetch はファイルを取ってくる命令）
+    const res = await fetch("config.json");
 
+    // ▼ 読み込んだ内容を JSON（データの形）に変換
+    const config = await res.json();
+
+    // ▼ config.json の中の "env" を読む
+    //    "dev" → 開発用
+    //    "prod" → 公開用
+    const env = config.env;
+
+    // ▼ env に応じて Supabase の URL と KEY をセット
+    SUPABASE_URL = config.supabase[env].url;
+    SUPABASE_KEY = config.supabase[env].key;
+
+    // ▼ Supabase に接続する「client」を作成
+    //    これが完成すると、DBに insert / select ができる
+    client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    console.log(`Supabase 初期化完了！現在の環境 → ${env}`);
+  } catch (e) {
+    // ▼ config.json が読み込めなかった時のエラー
+    console.error("config.json の読み込みに失敗しました:", e);
+  }
+}
+
+// ▼ ゲーム開始前に必ずこの関数を実行して、Supabase を使える状態にする
+await loadConfig();
 
 
 // ============================

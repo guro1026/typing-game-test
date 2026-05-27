@@ -1,0 +1,13 @@
+{
+  "env": "dev",
+  "supabase": {
+    "dev": {
+      "url": "https://bznzxcllyocfairwjzzk.supabase.co",
+      "key": "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e"
+    },
+    "prod": {
+      "url": "https://xmunssdlfimonjkhagow.supabase.co",
+      "key": "sb_publishable_EbUA5OzVH_aXPD_Wto9Brg_TOlEzTW6"
+    }
+  }
+}
