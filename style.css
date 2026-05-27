@@ -164,9 +164,10 @@ body {
 }
 
 /* ------------------------------------------------------------
-   タイトル画面の音量調整
-   - pointer-events: auto → スライダー操作可能にする
-   - z-index: 最前面に配置
+   BGMスライダー（常に表示）
+   - タイトルとゲーム画面で同じ位置・同じサイズ
+   - pointer-events: auto → 透明壁の影響を受けない
+   - z-index: 最前面に固定
 ------------------------------------------------------------ */
 #volume-area {
   position: absolute;
@@ -177,14 +178,14 @@ body {
   color: #d0eaff;
   font-size: 16px;
   text-shadow: 0 0 6px #4cf;
-  z-index: 99999;
-  pointer-events: auto; /* ← スライダー操作可能に */
+  z-index: 9999999 !important; /* 最前面 */
+  pointer-events: auto !important; /* 操作可能 */
 }
 
-/* スライダー本体（Chromeで画像扱いされるため明示的に有効化） */
+/* スライダー本体（Chrome対策） */
 #volume-area input[type="range"] {
   pointer-events: auto !important;
-  z-index: 100000;
+  z-index: 10000000 !important;
 }
 
 /* ============================================================
@@ -238,7 +239,15 @@ body {
 
 /* ------------------------------------------------------------
    ファイター（キャラ＋気弾）
+   ※ 透明壁を完全無効化（最も安全）
 ------------------------------------------------------------ */
+#fighter,
+#character,
+#keyboard,
+#hud {
+  pointer-events: none !important; /* ← 透明壁を完全に消す */
+}
+
 #fighter {
   position: absolute;
   bottom: 0;
@@ -249,7 +258,7 @@ body {
   z-index: 8000;
 }
 
-/* キャラ画像（気を溜める姿） */
+/* キャラ画像（オーラ付き） */
 #character {
   position: absolute;
   bottom: 0;
@@ -263,9 +272,17 @@ body {
   animation: auraPulse 1.6s infinite ease-in-out;
 }
 
+/* 女性テーマのときはキャラ本体もピンクオーラに変更 */
+body.pink-theme #character {
+  filter:
+    drop-shadow(0 0 15px white)
+    drop-shadow(0 0 30px #ff66cc)
+    drop-shadow(0 0 45px #ff99dd)
+    drop-shadow(0 0 60px #ffb6e6);
+}
+
 /* ------------------------------------------------------------
    気弾（デフォルトは無色）
-   ※ ここに青オーラが入っていたのが女性オーラ水色化の原因
 ------------------------------------------------------------ */
 #ki-ball {
   position: absolute;
@@ -277,7 +294,7 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  filter: none; /* ← デフォルト無色（最重要） */
+  filter: none; /* ← デフォルト無色（青オーラ削除済み） */
 }
 
 /* 男性：青オーラ */
@@ -287,7 +304,7 @@ body {
     drop-shadow(0 0 35px #0ff);
 }
 
-/* 女性：白＋ピンクオーラ（完全修正版） */
+/* 女性：白＋ピンクオーラ */
 #ki-ball.pink {
   filter:
     drop-shadow(0 0 15px white)
