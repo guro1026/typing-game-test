@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <title>結果発表 - Typing Game</title>
 
-  <!-- ===============================================
-       🔰 Supabase SDK 読み込み（これが無いと supabase が undefined になる）
-       - game2.js と同じく、results.html でも Supabase を使うために必須
-       =============================================== -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+  <!-- ============================================================
+       🟦 Supabase v2 は「グローバル変数 supabase」を提供しない。
+       🟦 だから script src ではなく「import」が必須。
+       🟦 下の <script type="module"> 内で import するので、
+          ここでは SDK の script タグは不要。
+       ============================================================ -->
+  
   <style>
+    /* 画面全体の基本設定 */
     body {
       margin: 0;
       padding: 0;
@@ -18,6 +20,7 @@
       font-family: "Yu Gothic", sans-serif;
     }
 
+    /* 結果画面のコンテナ */
     #results-screen {
       width: 100vw;
       height: 100vh;
@@ -25,19 +28,18 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      background: #000; /* JSで上書きされる */
+      background: #000; /* JS で性別に応じて上書き */
     }
 
+    /* RESULT タイトル */
     #result-title {
       font-size: 60px;
       font-weight: bold;
       margin-top: 3%;
-      text-shadow:
-        0 0 20px #fff,
-        0 0 40px #ff0,
-        0 0 60px #ff0;
+      text-shadow: 0 0 20px #fff, 0 0 40px #ff0, 0 0 60px #ff0;
     }
 
+    /* スコア・コンボなどの表示ボックス */
     .result-box {
       margin: 15px auto;
       padding: 15px 30px;
@@ -49,6 +51,7 @@
       text-shadow: 0 0 10px #000;
     }
 
+    /* コメント表示ボックス */
     #comment-box {
       font-size: 20px;
       padding: 15px 25px;
@@ -60,6 +63,7 @@
       text-shadow: 0 0 10px #000;
     }
 
+    /* 右上のキャラシルエット画像 */
     #character-image {
       position: absolute;
       top: 20px;
@@ -69,6 +73,7 @@
       opacity: 0.9;
     }
 
+    /* タイトルへ戻るボタン */
     #back-btn {
       margin-top: 25px;
       padding: 12px 28px;
@@ -93,7 +98,7 @@
 
     <div id="result-title">RESULT</div>
 
-    <!-- 性別で切り替わるキャラシルエット（右上） -->
+    <!-- 性別で切り替わるキャラシルエット -->
     <img id="character-image" src="" alt="character">
 
     <div class="result-box">
@@ -117,29 +122,35 @@
 
   </div>
 
-  <!-- ===============================================
-       🔰 メインスクリプト（module 必須）
+  <!-- ============================================================
+       🟦 メインスクリプト（module 必須）
+       - Supabase v2 の import
        - config.json の読み込み
        - Supabase 初期化
-       - 結果画面の表示処理
-       =============================================== -->
+       - 結果画面の描画
+       ============================================================ -->
   <script type="module">
 
-    // ===============================================
-    // 🔰 Supabase 初期化（results.html 用）
-    // ===============================================
+    /* ------------------------------------------------------------
+       🟦 Supabase v2 の import
+       - v2 は「supabase.createClient」ではなく
+         「import { createClient } from ...」が必須。
+       - グローバル変数 supabase は存在しない。
+       ------------------------------------------------------------ */
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-    // ▼ Supabase の URL と KEY（最初は空）
-    //   config.json を読み込んだ後にセットされる
+
+    /* ------------------------------------------------------------
+       🟦 Supabase 接続情報（config.json 読み込み後にセット）
+       ------------------------------------------------------------ */
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
-
-    // ▼ Supabase クライアント（DB操作の本体）
     let client = null;
 
-    // ---------------------------------------------------------------
-    // 📌 config.json を読み込んで dev / prod を自動切り替え
-    // ---------------------------------------------------------------
+
+    /* ------------------------------------------------------------
+       🟦 config.json を読み込み、dev/prod を自動切り替え
+       ------------------------------------------------------------ */
     async function loadConfig() {
       try {
         // config.json を取得
@@ -151,12 +162,12 @@
         // env = "dev" or "prod"
         const env = config.env;
 
-        // env に応じて URL と KEY をセット
+        // URL と KEY をセット
         SUPABASE_URL = config.supabase[env].url;
         SUPABASE_KEY = config.supabase[env].key;
 
-        // Supabase クライアント作成
-        client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Supabase クライアント作成（v2 の正しい書き方）
+        client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         console.log(`Supabase 初期化完了（${env} 環境）`);
       } catch (e) {
@@ -164,13 +175,14 @@
       }
     }
 
-    // ▼ 最初に必ず実行（これが無いと Supabase が使えない）
+    // 🔰 Supabase を使う前に必ず config.json を読み込む
     await loadConfig();
 
 
-    // ===============================================
-    // 🔰 localStorage から結果を取得
-    // ===============================================
+    /* ------------------------------------------------------------
+       🟦 localStorage からゲーム結果を取得
+       - game2.js の endGame() で保存した値を読む
+       ------------------------------------------------------------ */
     const score = localStorage.getItem("score") || 0;
     const maxCombo = localStorage.getItem("maxCombo") || 0;
     const totalTyped = localStorage.getItem("totalTyped") || 0;
@@ -178,18 +190,20 @@
     const weaknessComment = localStorage.getItem("weaknessComment") || "";
     const gender = localStorage.getItem("gender") || "men";
 
-    // ===============================================
-    // 🔰 結果を画面に反映
-    // ===============================================
+
+    /* ------------------------------------------------------------
+       🟦 結果を画面に反映
+       ------------------------------------------------------------ */
     document.getElementById("r-score").textContent = score;
     document.getElementById("r-maxcombo").textContent = maxCombo;
     document.getElementById("r-total").textContent = totalTyped;
     document.getElementById("r-miss").textContent = missCount;
     document.getElementById("r-comment").textContent = weaknessComment;
 
-    // ===============================================
-    // 🔰 性別で背景色を切り替え
-    // ===============================================
+
+    /* ------------------------------------------------------------
+       🟦 性別で背景色を切り替え
+       ------------------------------------------------------------ */
     const resultScreen = document.getElementById("results-screen");
 
     if (gender === "female") {
@@ -202,9 +216,10 @@
         'linear-gradient(135deg, #0a1a3f, #1c2e5a)';
     }
 
-    // ===============================================
-    // 🔰 性別でキャラシルエット切り替え
-    // ===============================================
+
+    /* ------------------------------------------------------------
+       🟦 性別でキャラシルエット切り替え
+       ------------------------------------------------------------ */
     const charImg = document.getElementById("character-image");
 
     if (gender === "female") {
@@ -213,9 +228,10 @@
       charImg.src = "images/character/men/silhouette_man.png";
     }
 
-    // ===============================================
-    // 🔰 タイトルへ戻るボタン
-    // ===============================================
+
+    /* ------------------------------------------------------------
+       🟦 タイトルへ戻る
+       ------------------------------------------------------------ */
     document.getElementById("back-btn").addEventListener("click", () => {
       location.href = "index.html";
     });
