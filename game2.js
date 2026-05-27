@@ -93,7 +93,7 @@ let missYouon = 0;            // 拗音系ミス数（ここでは 'y' を含む
 // ============================
 const bgm = new Audio("sounds/bgm.mp3");
 bgm.loop = true;
-bgm.volume = 0;
+bgm.volume = 0.5; // ← 初期音量を 50% に変更
 
 // 自動再生ブロック対策：ユーザー操作があるまで待つ
 bgm.play().catch(() => {
@@ -128,8 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// ============================
-// 効果音
+// ============================// 効果音
 // ============================
 const seHit = new Audio("sounds/hit.mp3");
 seHit.volume = 0.6;
