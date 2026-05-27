@@ -128,22 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
-// 音量を同期させる関数
-function syncVolumeSlider(v) {
-  bgm.volume = v / 100;
-  volumeSliderTitle.value = v;
-  volumeSliderGame.value = v;
-}
-
-// スライダー操作イベント
-volumeSliderTitle.addEventListener("input", () => {
-  syncVolumeSlider(volumeSliderTitle.value);
-});
-volumeSliderGame.addEventListener("input", () => {
-  syncVolumeSlider(volumeSliderGame.value);
-});
-
 // ============================
 // 効果音
 // ============================
