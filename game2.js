@@ -216,7 +216,7 @@ function startGame() {
 const playerName = localStorage.getItem("playerName") || "";
 const character = document.getElementById("character");
 const kiBall = document.getElementById("ki-ball");
-const bgLayer = document.getElementById("bg-layer");
+const bgLayer = document.getElementById("bg-layer-game");
 
 fetch("employee_list.csv")
   .then(res => res.text())
