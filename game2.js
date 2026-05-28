@@ -1,9 +1,17 @@
+document.addEventListener("DOMContentLoaded", () => {
 // ============================
 // 🎵 BGM（タイトル画面のみ音量調整）
 // ============================
 
 // ▼ BGM 読み込み
 const bgm = new Audio("sounds/bgm.mp3");
+// ▼ SE 読み込み
+const seHit = new Audio("sounds/hit.mp3");
+const seBeep = new Audio("sounds/beep.mp3");
+// ▼ スライダー宣言
+
+const volumeSlider = document.getElementById("volume-slider");
+
 bgm.loop = true;
 
 // ▼ 初期ミュート風（Chrome のミュート固定バグ回避）
@@ -118,12 +126,6 @@ let missConsonant = 0;        // 子音ミス数
 let missYouon = 0;            // 拗音系ミス数（ここでは 'y' を含む文字などを簡易的に扱う）
 
 
-
-// ============================
-// 効果音
-// ============================
-const seHit = new Audio("sounds/hit.mp3");
-const seBeep = new Audio("sounds/beep.mp3");
 
 
 // ============================
