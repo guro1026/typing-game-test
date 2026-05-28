@@ -20,10 +20,11 @@ bgm.play().catch(() => {
   document.addEventListener("keydown", once);
 });
 
-// ▼ スライダー（タイトル画面のみ）
-const volumeSlider = document.getElementById("volume-slider");
 volumeSlider.addEventListener("input", () => {
-  bgm.volume = volumeSlider.value / 100;
+  const vol = volumeSlider.value / 100;
+  bgm.volume = vol;
+  seHit.volume = vol;
+  seBeep.volume = vol;
 });
 
 // ===============================================
@@ -122,10 +123,8 @@ let missYouon = 0;            // 拗音系ミス数（ここでは 'y' を含む
 // 効果音
 // ============================
 const seHit = new Audio("sounds/hit.mp3");
-seHit.volume = 0.6;
-
 const seBeep = new Audio("sounds/beep.mp3");
-seBeep.volume = 0.6;
+
 
 // ============================
 // ESCでタイトルへ戻る
