@@ -173,8 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 document.querySelectorAll(".course-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     selectedCourse = btn.dataset.course;
-    localStorage.setItem("selectedCourse", selectedCourse);
-    location.href = "play.html";
+    startGame();
   });
 });
 
