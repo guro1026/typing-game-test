@@ -7,7 +7,7 @@ const bgm = new Audio("sounds/bgm.mp3");
 bgm.loop = true;
 
 // ▼ 初期ミュート風（Chrome のミュート固定バグ回避）
-bgm.volume = 0.01;
+bgm.volume = 0;
 
 // ▼ 自動再生ブロック対策
 bgm.play().catch(() => {
