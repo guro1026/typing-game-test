@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>遊び方 - Typing Game</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+    font-family: "Yu Gothic", sans-serif;
+    text-align: center;
+  }
+
+  #container {
+    margin-top: 5%;
+  }
+
+  h1 {
+    font-size: 48px;
+    text-shadow: 0 0 20px #fff;
+  }
+
+  .box {
+    margin: 20px auto;
+    padding: 20px;
+    width: 70%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid #fff;
+    border-radius: 10px;
+    font-size: 22px;
+  }
+
+  #start-msg {
+    margin-top: 40px;
+    font-size: 26px;
+    color: #ff0;
+    text-shadow: 0 0 10px #ff0;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="container">
+  <h1>遊び方</h1>
+
+  <div class="box">
+    ・画面に表示されるローマ字をタイプして敵を倒せ！<br>
+    ・コンボをつなげると気弾が成長！<br>
+    ・10 / 15 / 20 コンボで覚醒倍率発動！<br>
+    ・60秒以内にどれだけ倒せるか勝負！
+  </div>
+
+  <div class="box">
+    <strong>BGM設定</strong><br><br>
+    <button id="bgm-on">BGMあり</button>
+    <button id="bgm-off">BGMなし</button>
+  </div>
+
+  <div id="start-msg">スペースキーでゲーム開始</div>
+</div>
+
+<script>
+  let bgmEnabled = true;
+
+  document.getElementById("bgm-on").addEventListener("click", () => {
+    bgmEnabled = true;
+    localStorage.setItem("bgmEnabled", "1");
+  });
+
+  document.getElementById("bgm-off").addEventListener("click", () => {
+    bgmEnabled = false;
+    localStorage.setItem("bgmEnabled", "0");
+  });
+
+  // ▼ スペースでゲーム開始
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space") {
+      // 裏モード keepitreal 発動
+      localStorage.setItem("keepitreal", "1");
+
+      // コースは index.html で保存済み
+      const course = localStorage.getItem("selectedCourse");
+
+      // game.html に遷移
+      location.href = `game.html?course=${course}`;
+    }
+  });
+</script>
+
+</body>
+</html>

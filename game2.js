@@ -179,87 +179,92 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-  // ======================================================
-  // ▶ ゲーム開始
-  // ======================================================
-  function startGame() {
-    state = "loading";
+// ======================================================
+// ▶ ゲーム開始
+// ======================================================
+function startGame() {
+  state = "loading";
 
-    document.getElementById("title-screen").style.display = "none";
-    document.getElementById("game-screen").style.display = "block";
-    document.getElementById("volume-area").style.display = "none";
-
-    // ▼ 名前から性別判定 → キャラ・背景・気弾切替
-    const playerName = localStorage.getItem("playerName") || "";
-    const character = document.getElementById("character");
-    const kiBall = document.getElementById("ki-ball");
-    const bgLayer = document.getElementById("bg-layer-game");
-
-    fetch("employee_list.csv")
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.trim().split("\n").slice(1);
-        let gender = "male";
-
-        for (const line of lines) {
-          const [name, g] = line.split(",").map(s => s.trim());
-          if (name === playerName) {
-            gender = g;
-            break;
-          }
-        }
-
-        localStorage.setItem("gender", gender);
-
-        // ▼ キャラ画像
-        if (gender === "female") {
-          character.src = "images/character/women/kiball_woman.png";
-          document.body.classList.add("pink-theme");
-        } else {
-          character.src = "images/character/men/kiball_man.png";
-          document.body.classList.remove("pink-theme");
-        }
-
-        // ▼ 背景
-        bgLayer.style.backgroundImage =
-          gender === "female"
-            ? 'url("images/bg/game_bg_woman.png")'
-            : 'url("images/bg/game_bg_man.png")';
-
-        // ▼ 気弾
-        kiBall.style.backgroundImage =
-          gender === "female"
-            ? 'url("images/kiball/pink.png")'
-            : 'url("images/kiball/blue.png")';
-      });
-
-    // ▼ ステータス初期化
-    score = 0;
-    combo = 0;
-    maxCombo = 0;
-    timeLeft = 60;
-
-    totalTyped = 0;
-    missCount = 0;
-    missVowel = 0;
-    missConsonant = 0;
-    missYouon = 0;
-
-    updateHUD();
-
-    // ▼ 気弾初期化
-    kiPower = 0;
-    const ball = document.getElementById("ki-ball");
-    ball.classList.remove("white", "gold", "pulse");
-    ball.classList.add("blue");
-    ball.style.transform = "translate(-50%, -50%) scale(0.02)";
-
-    // ▼ タイマー開始 & CSV 読み込み
-    startTimer();
-    loadCSV(selectedCourse);
+  // ★ 遊び方ページで選んだ BGM ON/OFF を反映
+  const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
+  if (!bgmEnabled) {
+    bgm.volume = 0;
+    volumeSlider.value = 0;
   }
 
+  document.getElementById("title-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "block";
+  document.getElementById("volume-area").style.display = "none";
 
+  // ▼ 名前から性別判定 → キャラ・背景・気弾切替
+  const playerName = localStorage.getItem("playerName") || "";
+  const character = document.getElementById("character");
+  const kiBall = document.getElementById("ki-ball");
+  const bgLayer = document.getElementById("bg-layer-game");
+
+  fetch("employee_list.csv")
+    .then(res => res.text())
+    .then(text => {
+      const lines = text.trim().split("\n").slice(1);
+      let gender = "male";
+
+      for (const line of lines) {
+        const [name, g] = line.split(",").map(s => s.trim());
+        if (name === playerName) {
+          gender = g;
+          break;
+        }
+      }
+
+      localStorage.setItem("gender", gender);
+
+      // ▼ キャラ画像
+      if (gender === "female") {
+        character.src = "images/character/women/kiball_woman.png";
+        document.body.classList.add("pink-theme");
+      } else {
+        character.src = "images/character/men/kiball_man.png";
+        document.body.classList.remove("pink-theme");
+      }
+
+      // ▼ 背景
+      bgLayer.style.backgroundImage =
+        gender === "female"
+          ? 'url("images/bg/game_bg_woman.png")'
+          : 'url("images/bg/game_bg_man.png")';
+
+      // ▼ 気弾
+      kiBall.style.backgroundImage =
+        gender === "female"
+          ? 'url("images/kiball/pink.png")'
+          : 'url("images/kiball/blue.png")';
+    });
+
+  // ▼ ステータス初期化
+  score = 0;
+  combo = 0;
+  maxCombo = 0;
+  timeLeft = 60;
+
+  totalTyped = 0;
+  missCount = 0;
+  missVowel = 0;
+  missConsonant = 0;
+  missYouon = 0;
+
+  updateHUD();
+
+  // ▼ 気弾初期化
+  kiPower = 0;
+  const ball = document.getElementById("ki-ball");
+  ball.classList.remove("white", "gold", "pulse");
+  ball.classList.add("blue");
+  ball.style.transform = "translate(-50%, -50%) scale(0.02)";
+
+  // ▼ タイマー開始 & CSV 読み込み
+  startTimer();
+  loadCSV(selectedCourse);
+}
 
   // ======================================================
   // ⏱ タイマー
