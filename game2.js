@@ -360,6 +360,10 @@ document.addEventListener("keydown", e => {
   if (timeLeft <= 0) return;
 
   const key = e.key.toLowerCase();
+
+  // ★ アルファベット以外は無視（Shift, Ctrl, Alt, Enter, Backspace など）
+  if (!/^[a-z]$/.test(key)) return;
+
   const target = currentRomaji[0]?.toLowerCase();
 
   // 総打鍵数カウント（弱点分析用）
@@ -391,7 +395,7 @@ document.addEventListener("keydown", e => {
     // ----------------------------
     // ★ 覚醒倍率（10 / 15 / 20 コンボ達成の瞬間だけ）
     // ----------------------------
-    const willClear = currentRomaji.length === 0; // この文字でお題クリア？
+    const willClear = currentRomaji.length === 0;
     const nextCombo = combo + 1;
 
     if (willClear) {
@@ -404,13 +408,6 @@ document.addEventListener("keydown", e => {
     score += add;
     updateHUD();
 
-    // 覚醒時の気弾光演出
- //  if (willClear && (nextCombo === 10 || nextCombo === 15 || nextCombo === 20)) {
- //     const ball = document.getElementById("ki-ball");
- //     ball.classList.add("pulse");
- //     setTimeout(() => ball.classList.remove("pulse"), 300);
- //   }
-
     // ============================
     // お題クリア
     // ============================
@@ -418,7 +415,7 @@ document.addEventListener("keydown", e => {
       combo++;
       if (combo > maxCombo) maxCombo = combo;
 
-      // 気弾成長（色は固定でサイズだけ変化）
+      // 気弾成長
       growKi();
 
       updateHUD();
@@ -448,6 +445,7 @@ document.addEventListener("keydown", e => {
     updateHUD();
   }
 });
+
 
 // ============================
 // キーボード光演出
