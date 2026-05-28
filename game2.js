@@ -1,28 +1,3 @@
-// ============================
-// 🎵 BGM（最優先で宣言）
-// ============================
-const bgm = new Audio("sounds/bgm.mp3");
-bgm.loop = true;
-bgm.volume = 0.01;
-
-// ▼ 自動再生ブロック対策
-bgm.play().catch(() => {
-  const once = () => {
-    bgm.play().catch(() => {});
-    document.removeEventListener("click", once);
-    document.removeEventListener("keydown", once);
-  };
-  document.addEventListener("click", once);
-  document.addEventListener("keydown", once);
-});
-
-// ▼ スライダー（DOMContentLoaded の外でOK）
-const volumeSlider = document.getElementById("volume-slider");
-volumeSlider.addEventListener("input", () => {
-  bgm.volume = volumeSlider.value / 100;
-});
-
-
 // ===============================================
 // 🔰 Supabase 初期化パート（超ていねいコメント付き）
 // ===============================================
