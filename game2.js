@@ -170,12 +170,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ======================================================
   // 📚 コース選択
   // ======================================================
-  document.querySelectorAll(".course-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedCourse = btn.dataset.course;
-      startGame();
-    });
+document.querySelectorAll(".course-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedCourse = btn.dataset.course;
+    localStorage.setItem("selectedCourse", selectedCourse);
+    location.href = "play.html";
   });
+});
 
 
 
