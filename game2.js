@@ -89,13 +89,22 @@ let missConsonant = 0;        // 子音ミス数
 let missYouon = 0;            // 拗音系ミス数（ここでは 'y' を含む文字などを簡易的に扱う）
 
 // ============================
-// BGM
+// 🎵 BGM（タイトル画面のみ音量調整）
 // ============================
+
+// ▼ BGM 読み込み
 const bgm = new Audio("sounds/bgm.mp3");
 bgm.loop = true;
-bgm.volume = 0.01; // ← 初期ミュート風（Chrome対策）
 
-// 自動再生ブロック対策：ユーザー操作があるまで待つ
+// ▼ 初期ミュート風（Chrome のミュート固定バグ回避）
+//   ・見た目はミュート（スライダー0）
+//   ・内部は 0.01（ほぼ無音）
+//   ・volume=0 のまま play() すると Chrome が「ミュート扱い」にしてしまい
+//     後から音量変更が効かなくなるため、この値が最適解。
+bgm.volume = 0.01;
+
+// ▼ 自動再生ブロック対策
+//   ・ユーザー操作（クリック or キー押下）があるまで再生できない
 bgm.play().catch(() => {
   const once = () => {
     bgm.play().catch(() => {});
@@ -106,27 +115,25 @@ bgm.play().catch(() => {
   document.addEventListener("keydown", once);
 });
 
-// ===============================
-// BGMスライダー（1つだけ）
-// ===============================
+// ============================
+// 🎚 タイトル画面の BGM スライダー
+// ============================
+//
+// HTML 側には <input id="volume-slider"> が存在する前提。
+// ゲーム中のスライダーは廃止したため、この1つだけでOK。
+//
 document.addEventListener("DOMContentLoaded", () => {
   const volumeSlider = document.getElementById("volume-slider");
 
+  // ▼ スライダー操作で BGM 音量を変更
   volumeSlider.addEventListener("input", () => {
     const vol = volumeSlider.value / 100;
     bgm.volume = vol;
   });
 });
 
-  // スライダー操作でBGM音量を変更
-  volumeSlider.addEventListener("input", () => {
-    const vol = volumeSlider.value / 100;
-    bgm.volume = vol;
-  });
-
-});
-
-// ============================// 効果音
+// ============================
+// 効果音
 // ============================
 const seHit = new Audio("sounds/hit.mp3");
 seHit.volume = 0.6;
