@@ -165,6 +165,7 @@ function returnToTitle() {
 
   document.getElementById("game-screen").style.display = "none";
   document.getElementById("title-screen").style.display = "block";
+document.getElementById("volume-area").style.display = "block";
 
   updateHUD();
 }
@@ -220,7 +221,8 @@ function startGame() {
   // 画面切り替え：タイトル → ゲーム
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
-  
+  document.getElementById("volume-area").style.display = "none";
+
   
 // ============================
 // ★ 名前から性別を判定してキャラ・背景・気弾を切り替える
