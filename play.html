@@ -78,14 +78,12 @@
   // ▼ スペースでゲーム開始
   document.addEventListener("keydown", e => {
     if (e.code === "Space") {
-      // 裏モード keepitreal 発動
+
+      // 裏モード使うなら残す、不要なら削除OK
       localStorage.setItem("keepitreal", "1");
 
-      // コースは index.html で保存済み
-      const course = localStorage.getItem("selectedCourse");
-
-      // game.html に遷移
-      location.href = `game.html?course=${course}`;
+      // index.html に戻ってコース選択 → ゲーム開始
+      location.href = "index.html";
     }
   });
 </script>
