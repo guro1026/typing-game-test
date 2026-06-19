@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ranking</title>
+  <link rel="stylesheet" href="ranking.css" />
+</head>
+<body>
+
+  <div class="container">
+
+    <h1 class="title">RANKING</h1>
+
+    <!-- 月間ベスト -->
+    <div class="monthly-best">
+      <h2>今月のベストスコア</h2>
+      <div id="bestScore" class="best-score-value">--</div>
+    </div>
+
+    <!-- ランキング表 -->
+    <div class="ranking-table">
+      <div class="header-row">
+        <span>順位</span>
+        <span>名前</span>
+        <span>スコア</span>
+      </div>
+
+      <div id="rankingList"></div>
+    </div>
+
+    <button class="back-btn" onclick="location.href='index.html'">タイトルへ戻る</button>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="ranking.js"></script>
+</body>
+</html>
