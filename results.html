@@ -100,13 +100,18 @@
       ／ ミス：<span id="r-miss"></span>
     </div>
 
-    <!-- ★ 追加：倒した敵 -->
     <div class="result-box">
       倒した敵：<span id="defeated-enemy"></span>
     </div>
 
     <div id="comment-box">
       <span id="r-comment"></span>
+    </div>
+
+    <!-- ★ 追加：自己ベスト & 自分の順位 -->
+    <div id="my-ranking-box" class="result-box">
+      <div>自己ベスト：<span id="myBestScore">--</span></div>
+      <div>今月の順位：<span id="myRank">--</span></div>
     </div>
 
     <button id="back-btn">タイトルへ戻る</button>
@@ -118,18 +123,12 @@
        ============================================================ -->
   <script type="module">
 
-    /* ------------------------------------------------------------
-       🟦 Supabase v2 import
-       ------------------------------------------------------------ */
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
     let client = null;
 
-    /* ------------------------------------------------------------
-       🟦 config.json 読み込み
-       ------------------------------------------------------------ */
     async function loadConfig() {
       try {
         const res = await fetch("config.json");
@@ -141,14 +140,12 @@
 
         client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        console.log(`Supabase 初期化完了（${env}）`);
       } catch (e) {
         console.error("config.json 読み込みエラー:", e);
       }
     }
 
     await loadConfig();
-
 
     /* ------------------------------------------------------------
        🟦 localStorage から結果を取得
@@ -160,18 +157,14 @@
     const weaknessComment = localStorage.getItem("weaknessComment") || "";
     const defeatedEnemy = localStorage.getItem("defeatedEnemy") || "？？？";
     const gender = localStorage.getItem("gender") || "men";
+    const playerName = localStorage.getItem("playerName") || "名無し";
 
-
-    /* ------------------------------------------------------------
-       🟦 結果を画面に反映
-       ------------------------------------------------------------ */
     document.getElementById("r-score").textContent = score;
     document.getElementById("r-maxcombo").textContent = maxCombo;
     document.getElementById("r-total").textContent = totalTyped;
     document.getElementById("r-miss").textContent = missCount;
     document.getElementById("r-comment").textContent = weaknessComment;
     document.getElementById("defeated-enemy").textContent = defeatedEnemy;
-
 
     /* ------------------------------------------------------------
        🟦 性別で背景切り替え
@@ -186,9 +179,8 @@
         'linear-gradient(135deg, #0a1a3f, #1c2e5a)';
     }
 
-
     /* ------------------------------------------------------------
-       🟦 性別でキャラシルエット切り替え
+       🟦 キャラシルエット切り替え
        ------------------------------------------------------------ */
     const charImg = document.getElementById("character-image");
 
@@ -198,6 +190,48 @@
       charImg.src = "images/character/men/silhouette_man.png";
     }
 
+    /* ------------------------------------------------------------
+       🟦 今月の範囲
+       ------------------------------------------------------------ */
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
+
+    /* ------------------------------------------------------------
+       🟦 自己ベスト取得
+       ------------------------------------------------------------ */
+    async function loadMyBestScore() {
+      const { data } = await client
+        .from("scores")
+        .select("score")
+        .eq("name", playerName)
+        .gte("created_at", startOfMonth)
+        .lt("created_at", endOfMonth)
+        .order("score", { ascending: false })
+        .limit(1);
+
+      const best = data?.length ? data[0].score : "--";
+      document.getElementById("myBestScore").textContent = best;
+    }
+
+    /* ------------------------------------------------------------
+       🟦 自分の順位取得
+       ------------------------------------------------------------ */
+    async function loadMyRank() {
+      const { data } = await client
+        .from("scores")
+        .select("name, score")
+        .gte("created_at", startOfMonth)
+        .lt("created_at", endOfMonth)
+        .order("score", { ascending: false });
+
+      const rank = data.findIndex(row => row.name === playerName) + 1;
+      document.getElementById("myRank").textContent =
+        rank > 0 ? `${rank} 位` : "--";
+    }
+
+    loadMyBestScore();
+    loadMyRank();
 
     /* ------------------------------------------------------------
        🟦 タイトルへ戻る
