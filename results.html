@@ -108,7 +108,7 @@
       <span id="r-comment"></span>
     </div>
 
-    <!-- ★ 追加：自己ベスト & 自分の順位 -->
+    <!-- ★ 自己ベスト & 自分の順位 -->
     <div id="my-ranking-box" class="result-box">
       <div>自己ベスト：<span id="myBestScore">--</span></div>
       <div>今月の順位：<span id="myRank">--</span></div>
@@ -125,6 +125,9 @@
 
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+    /* ------------------------------------------------------------
+       🟦 Supabase 初期化
+       ------------------------------------------------------------ */
     let SUPABASE_URL = "";
     let SUPABASE_KEY = "";
     let client = null;
@@ -198,11 +201,11 @@
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
 
     /* ------------------------------------------------------------
-       🟦 自己ベスト取得
+       🟦 自己ベスト取得（score_logs）
        ------------------------------------------------------------ */
     async function loadMyBestScore() {
-      const { data } = await client
-        .from("scores")
+      const { data, error } = await client
+        .from("score_logs")
         .select("score")
         .eq("name", playerName)
         .gte("created_at", startOfMonth)
@@ -215,19 +218,27 @@
     }
 
     /* ------------------------------------------------------------
-       🟦 自分の順位取得
+       🟦 自分の順位取得（score_logs）
        ------------------------------------------------------------ */
     async function loadMyRank() {
-      const { data } = await client
-        .from("scores")
+      const { data, error } = await client
+        .from("score_logs")
         .select("name, score")
         .gte("created_at", startOfMonth)
         .lt("created_at", endOfMonth)
         .order("score", { ascending: false });
 
-      const rank = data.findIndex(row => row.name === playerName) + 1;
+      // ▼ data が null または空ならランク外
+      if (!Array.isArray(data) || data.length === 0) {
+        document.getElementById("myRank").textContent = "--";
+        return;
+      }
+
+      const index = data.findIndex(row => row.name === playerName);
+      const rank = index >= 0 ? index + 1 : "--";
+
       document.getElementById("myRank").textContent =
-        rank > 0 ? `${rank} 位` : "--";
+        rank === "--" ? "--" : `${rank} 位`;
     }
 
     loadMyBestScore();
