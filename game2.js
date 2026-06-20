@@ -138,40 +138,46 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-  // ======================================================
-  // 📝 名前入力
-  // ======================================================
-  document.getElementById("name-submit").addEventListener("click", validateName);
+// ======================================================
+// 📝 名前入力（完全版）
+// ======================================================
 
-  function validateName() {
-    const input = document.getElementById("name-input");
-    const error = document.getElementById("name-error");
-    const name = input.value.trim();
+// 「決定」ボタンを押したら validateName() を実行
+document.getElementById("name-submit").addEventListener("click", validateName);
 
-    if (name === "") {
-      error.textContent = "※ 名前を入力してください";
-      input.classList.add("error");
-      seBeep.currentTime = 0;
-      seBeep.play();
-      return;
-    }
+function validateName() {
+  const input = document.getElementById("name-input");
+  const error = document.getElementById("name-error");
+  const name = input.value.trim();
 
-    input.classList.remove("error");
-    error.textContent = "";
-
-    localStorage.setItem("playerName", name);
-
-  // 名前入力エリアを消す
-  document.getElementById("name-area").style.display = "none";
-
-  // ★ 遊び方ボタンを表示
-  document.getElementById("howto-area").style.display = "block";
-
-  // ★ コース選択はまだ表示しない
-  document.getElementById("course-buttons").style.display = "none";
+  // ▼ 空欄チェック
+  if (name === "") {
+    error.textContent = "※ 名前を入力してください";
+    input.classList.add("error");
+    seBeep.currentTime = 0;
+    seBeep.play();
+    return;
   }
 
+  // ▼ エラー解除
+  input.classList.remove("error");
+  error.textContent = "";
 
+  // ▼ 名前保存
+  localStorage.setItem("playerName", name);
+
+  // ▼ 名前入力エリアを消す
+  document.getElementById("name-area").style.display = "none";
+
+  // ▼ ★ 遊び方ボタンを表示（ここが重要）
+  document.getElementById("howto-area").style.display = "block";
+
+  // ▼ ★ コース選択はまだ表示しない
+  document.getElementById("course-buttons").style.display = "none";
+
+  // ▼ ★ 遊び方ページへ行ったかどうかのフラグをリセット
+  localStorage.removeItem("visitedHowTo");
+}
 
   // ======================================================
   // 📚 コース選択
