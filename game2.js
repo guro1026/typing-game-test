@@ -129,12 +129,11 @@ window.startGame = function () {
   // ▼ コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
-  // ▼ CSV 読み込み
-  loadCSV(selectedCourse);
-
-  // ▼ ゲーム開始（カウントダウンは countdown.html が担当）
-  startTimer();
-  nextWord();
+  // ▼ CSV 読み込み完了後にゲーム開始（重要）
+  loadCSV(selectedCourse).then(() => {
+    startTimer();
+    nextWord();
+  });
 };
 
 // ======================================================
@@ -155,10 +154,10 @@ function startTimer() {
 }
 
 // ======================================================
-// CSV 読み込み
+// CSV 読み込み（Promise を返す版）
 // ======================================================
 function loadCSV(course) {
-  fetch(`words_${course}.csv`)
+  return fetch(`words_${course}.csv`)
     .then(res => res.text())
     .then(text => {
       const lines = text.trim().split("\n");
