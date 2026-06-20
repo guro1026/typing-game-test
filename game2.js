@@ -38,7 +38,7 @@ let volumeSlider;
 let client = null;
 
 // ======================================================
-// 🟦 HUD 更新
+// HUD 更新
 // ======================================================
 function updateHUD() {
   document.getElementById("hud-score").textContent = score;
@@ -55,7 +55,7 @@ window.startGame = function () {
 
   // ▼ BGM ON/OFF
   const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-  bgm.volume = bgmEnabled ? (volumeSlider.value / 100) : 0;
+  bgm.volume = bgmEnabled ? (volumeSlider?.value / 100 || 0) : 0;
 
   // ▼ 画面切り替え
   document.getElementById("title-screen").style.display = "none";
@@ -133,7 +133,7 @@ window.startGame = function () {
 };
 
 // ======================================================
-// ⏱ タイマー
+// タイマー
 // ======================================================
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
@@ -416,13 +416,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   volumeSlider = document.getElementById("volume-slider");
 
-  // ▼ 音量調整
-  volumeSlider.addEventListener("input", () => {
-    const vol = volumeSlider.value / 100;
-    bgm.volume = vol;
-    seHit.volume = vol;
-    seBeep.volume = vol;
-  });
+  if (volumeSlider) {
+    volumeSlider.addEventListener("input", () => {
+      const vol = volumeSlider.value / 100;
+      bgm.volume = vol;
+      seHit.volume = vol;
+      seBeep.volume = vol;
+    });
+  } else {
+    console.error("volume-slider が見つかりません");
+  }
 
   // ▼ Supabase 初期化
   try {
