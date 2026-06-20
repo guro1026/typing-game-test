@@ -1,29 +1,37 @@
 // ======================================================
 // 🔊 グローバル変数（startGame が先に呼ばれてもOK）
 // ======================================================
+
+// 音関連
 let bgm, seHit, seBeep, volumeSlider;
 
+// ゲーム状態
 let state = "title";
 let selectedCourse = null;
 
+// お題データ
 let words = [];
 let currentJP = "";
 let currentRomaji = "";
 let originalRomaji = "";
 
+// スコア関連
 let score = 0;
 let combo = 0;
 let maxCombo = 0;
 
+// タイマー
 let timeLeft = 60;
 let timerInterval = null;
 
+// タイピング統計
 let totalTyped = 0;
 let missCount = 0;
 let missVowel = 0;
 let missConsonant = 0;
 let missYouon = 0;
 
+// 気弾パワー
 let kiPower = 0;
 
 // ======================================================
@@ -123,7 +131,6 @@ window.startGame = function () {
   startTimer();
   loadCSV(selectedCourse);
 };
-
 // ======================================================
 // 📌 DOMContentLoaded（初期化処理）
 // ======================================================
@@ -209,258 +216,261 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // ======================================================
-  // ⏱ タイマー
-  // ======================================================
-  function startTimer() {
-    if (timerInterval) clearInterval(timerInterval);
+  // ⏱ タイマー（startGame から呼ばれるため外に出すべき）
+// ======================================================
+});
 
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      updateHUD();
+// ======================================================
+// ⏱ タイマー（グローバル化）
+// ======================================================
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
 
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        endGame();
-      }
-    }, 1000);
-  }
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateHUD();
 
-  // ======================================================
-  // CSV 読み込み
-  // ======================================================
-  function loadCSV(course) {
-    fetch(`words_${course}.csv`)
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.trim().split("\n");
-        words = lines.slice(1).map(line => line.trim());
-        nextWord();
-      });
-  }
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }, 1000);
+}
 
-  // ======================================================
-  // 次のお題
-  // ======================================================
-  function nextWord() {
-    if (timeLeft <= 0) return;
+// ======================================================
+// CSV 読み込み（グローバル化）
+// ======================================================
+function loadCSV(course) {
+  fetch(`words_${course}.csv`)
+    .then(res => res.text())
+    .then(text => {
+      const lines = text.trim().split("\n");
+      words = lines.slice(1).map(line => line.trim());
+      nextWord();
+    });
+}
 
-    const line = words[Math.floor(Math.random() * words.length)].trim();
-    const cols = line.split(",").map(c => c.trim());
+// ======================================================
+// 次のお題（グローバル化）
+// ======================================================
+function nextWord() {
+  if (timeLeft <= 0) return;
 
-    currentJP = cols[0] || "";
-    currentRomaji = cols[2] || "";
-    originalRomaji = currentRomaji;
+  const line = words[Math.floor(Math.random() * words.length)].trim();
+  const cols = line.split(",").map(c => c.trim());
 
-    document.getElementById("word-jp").textContent = currentJP;
+  currentJP = cols[0] || "";
+  currentRomaji = cols[2] || "";
+  originalRomaji = currentRomaji;
+
+  document.getElementById("word-jp").textContent = currentJP;
+  document.getElementById("word-romaji").textContent = currentRomaji;
+
+  state = "playing";
+}
+// ======================================================
+// キー入力（グローバル化）
+// ======================================================
+document.addEventListener("keydown", e => {
+  if (state !== "playing") return;
+  if (timeLeft <= 0) return;
+
+  const key = e.key.toLowerCase();
+  if (!/^[a-z]$/.test(key)) return;
+
+  const target = currentRomaji[0]?.toLowerCase();
+  totalTyped++;
+
+  highlightKey(e.key);
+
+  if (!target) return;
+
+  // ▼ 正解
+  if (key === target) {
+    seHit.currentTime = 0;
+    seHit.play();
+
+    currentRomaji = currentRomaji.slice(1);
     document.getElementById("word-romaji").textContent = currentRomaji;
 
-    state = "playing";
-  }
+    let add = 1;
+    if (combo >= 5) add = 5;
+    else if (combo >= 3) add = 3;
 
-  // ======================================================
-  // キー入力
-  // ======================================================
-  document.addEventListener("keydown", e => {
-    if (state !== "playing") return;
-    if (timeLeft <= 0) return;
+    const willClear = currentRomaji.length === 0;
+    const nextCombo = combo + 1;
 
-    const key = e.key.toLowerCase();
-    if (!/^[a-z]$/.test(key)) return;
-
-    const target = currentRomaji[0]?.toLowerCase();
-    totalTyped++;
-
-    highlightKey(e.key);
-
-    if (!target) return;
-
-    // ▼ 正解
-    if (key === target) {
-      seHit.currentTime = 0;
-      seHit.play();
-
-      currentRomaji = currentRomaji.slice(1);
-      document.getElementById("word-romaji").textContent = currentRomaji;
-
-      let add = 1;
-      if (combo >= 5) add = 5;
-      else if (combo >= 3) add = 3;
-
-      const willClear = currentRomaji.length === 0;
-      const nextCombo = combo + 1;
-
-      if (willClear) {
-        if (nextCombo === 10) add *= 10;
-        if (nextCombo === 15) add *= 15;
-        if (nextCombo === 20) add *= 20;
-      }
-
-      score += add;
-      updateHUD();
-
-      if (currentRomaji.length === 0) {
-        combo++;
-        if (combo > maxCombo) maxCombo = combo;
-
-        growKi();
-
-        updateHUD();
-        setTimeout(nextWord, 200);
-      }
-
-    } else {
-      // ▼ ミス
-      seBeep.currentTime = 0;
-      seBeep.play();
-
-      missCount++;
-
-      if ("aiueo".includes(target)) missVowel++;
-      else if (target === "y") missYouon++;
-      else missConsonant++;
-
-      combo = 0;
-      updateHUD();
+    // ▼ 覚醒ボーナス
+    if (willClear) {
+      if (nextCombo === 10) add *= 10;
+      if (nextCombo === 15) add *= 15;
+      if (nextCombo === 20) add *= 20;
     }
+
+    score += add;
+    updateHUD();
+
+    if (currentRomaji.length === 0) {
+      combo++;
+      if (combo > maxCombo) maxCombo = combo;
+
+      growKi();
+
+      updateHUD();
+      setTimeout(nextWord, 200);
+    }
+
+  } else {
+    // ▼ ミス
+    seBeep.currentTime = 0;
+    seBeep.play();
+
+    missCount++;
+
+    if ("aiueo".includes(target)) missVowel++;
+    else if (target === "y") missYouon++;
+    else missConsonant++;
+
+    combo = 0;
+    updateHUD();
+  }
+});
+
+// ======================================================
+// キーボード光演出（グローバル化）
+// ======================================================
+function highlightKey(key) {
+  const upper = key.toUpperCase();
+  const keyEl = [...document.querySelectorAll(".key")]
+    .find(k => k.textContent.toUpperCase() === upper);
+
+  if (!keyEl) return;
+
+  keyEl.classList.add("active");
+  setTimeout(() => keyEl.classList.remove("active"), 150);
+}
+
+// ======================================================
+// 気弾成長（グローバル化）
+// ======================================================
+function updateKiBall() {
+  const ball = document.getElementById("ki-ball");
+  const scale = 0.1 + (kiPower / 100) * 0.5;
+  ball.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+
+function growKi() {
+  if (combo === 1) kiPower += 6;
+  else kiPower += 0.5;
+
+  if (kiPower > 100) kiPower = 100;
+  updateKiBall();
+}
+
+// ======================================================
+// ビーム演出（グローバル化）
+// ======================================================
+function fireBeam() {
+  const beam = document.getElementById("beam");
+  beam.classList.add("beam-fire");
+  setTimeout(() => beam.classList.remove("beam-fire"), 500);
+}
+
+// ======================================================
+// 敵撃破ロジック（グローバル化）
+// ======================================================
+function getDefeatedEnemy(score) {
+  if (score <= 10000) return "サイバイマン";
+  if (score <= 20000) return "ラディッツ";
+  if (score <= 30000) return "ナッパ";
+  if (score <= 40000) return "ベジータ（初期）";
+  if (score <= 50000) return "フリーザ（第1形態）";
+  if (score <= 60000) return "フリーザ（最終形態）";
+  if (score <= 70000) return "セル（完全体）";
+  if (score <= 80000) return "魔人ブウ（善）";
+  if (score <= 90000) return "魔人ブウ（純粋）";
+  if (score <= 100000) return "ビルス";
+  return "破壊神クラス撃破";
+}
+
+// ======================================================
+// 弱点分析コメント（グローバル化）
+// ======================================================
+function getWeaknessComment(accuracy, v, c, y) {
+  if (accuracy >= 95) return "お前…強くなったな。もう上級者の領域だぞ。";
+
+  const maxMiss = Math.max(v, c, y);
+
+  if (maxMiss === 0) return "まだまだ伸びしろだらけだな…修行を続けろ！";
+  if (maxMiss === y) return "拗音がまだ甘えな…“kyo”や“sha”を鍛えりゃもっと強くなれるぞ！";
+  if (maxMiss === v) return "基本の母音でつまずいてるぞ…落ち着いて指を動かせ！";
+  return "子音の切り替えが遅いな…もっとリズムを意識しろ！";
+}
+
+// ======================================================
+// Supabase 保存（グローバル化）
+// ======================================================
+async function saveScoreToSupabase(data) {
+  try {
+    const { error } = await client.from("score_logs").insert(data);
+    if (error) console.error("Supabase 保存エラー:", error);
+  } catch (e) {
+    console.error("Supabase 通信エラー:", e);
+  }
+}
+
+// ======================================================
+// ゲーム終了（グローバル化）
+// ======================================================
+function endGame() {
+  state = "end";
+
+  kiPower = 100;
+  updateKiBall();
+
+  document.body.classList.add("flash");
+  setTimeout(() => document.body.classList.remove("flash"), 300);
+
+  fireBeam();
+
+  const accuracy =
+    totalTyped > 0
+      ? Math.floor(((totalTyped - missCount) / totalTyped) * 100)
+      : 0;
+
+  const defeatedEnemy = getDefeatedEnemy(score);
+  const weaknessComment = getWeaknessComment(
+    accuracy,
+    missVowel,
+    missConsonant,
+    missYouon
+  );
+
+  const playerName = localStorage.getItem("playerName") || "名無し";
+
+  // ▼ 結果を保存
+  localStorage.setItem("score", score);
+  localStorage.setItem("maxCombo", maxCombo);
+  localStorage.setItem("accuracy", accuracy);
+  localStorage.setItem("totalTyped", totalTyped);
+  localStorage.setItem("missCount", missCount);
+  localStorage.setItem("defeatedEnemy", defeatedEnemy);
+  localStorage.setItem("weaknessComment", weaknessComment);
+
+  // ▼ Supabase 保存
+  saveScoreToSupabase({
+    name: playerName,
+    score: score,
+    max_combo: maxCombo,
+    accuracy: accuracy,
+    total_typed: totalTyped,
+    miss_count: missCount,
+    defeated_enemy: defeatedEnemy,
+    created_at: new Date().toISOString()
   });
 
-  // ======================================================
-  // キーボード光演出
-  // ======================================================
-  function highlightKey(key) {
-    const upper = key.toUpperCase();
-    const keyEl = [...document.querySelectorAll(".key")]
-      .find(k => k.textContent.toUpperCase() === upper);
-
-    if (!keyEl) return;
-
-    keyEl.classList.add("active");
-    setTimeout(() => keyEl.classList.remove("active"), 150);
-  }
-
-  // ======================================================
-  // 気弾成長
-  // ======================================================
-  function updateKiBall() {
-    const ball = document.getElementById("ki-ball");
-    const scale = 0.1 + (kiPower / 100) * 0.5;
-    ball.style.transform = `translate(-50%, -50%) scale(${scale})`;
-  }
-
-  function growKi() {
-    if (combo === 1) kiPower += 6;
-    else kiPower += 0.5;
-
-    if (kiPower > 100) kiPower = 100;
-    updateKiBall();
-  }
-
-  // ======================================================
-  // ビーム演出
-  // ======================================================
-  function fireBeam() {
-    const beam = document.getElementById("beam");
-    beam.classList.add("beam-fire");
-    setTimeout(() => beam.classList.remove("beam-fire"), 500);
-  }
-
-  // ======================================================
-  // 敵撃破ロジック
-  // ======================================================
-  function getDefeatedEnemy(score) {
-    if (score <= 10000) return "サイバイマン";
-    if (score <= 20000) return "ラディッツ";
-    if (score <= 30000) return "ナッパ";
-    if (score <= 40000) return "ベジータ（初期）";
-    if (score <= 50000) return "フリーザ（第1形態）";
-    if (score <= 60000) return "フリーザ（最終形態）";
-    if (score <= 70000) return "セル（完全体）";
-    if (score <= 80000) return "魔人ブウ（善）";
-    if (score <= 90000) return "魔人ブウ（純粋）";
-    if (score <= 100000) return "ビルス";
-    return "破壊神クラス撃破";
-  }
-
-  // ======================================================
-  // 弱点分析コメント
-  // ======================================================
-  function getWeaknessComment(accuracy, v, c, y) {
-    if (accuracy >= 95) return "お前…強くなったな。もう上級者の領域だぞ。";
-
-    const maxMiss = Math.max(v, c, y);
-
-    if (maxMiss === 0) return "まだまだ伸びしろだらけだな…修行を続けろ！";
-    if (maxMiss === y) return "拗音がまだ甘えな…“kyo”や“sha”を鍛えりゃもっと強くなれるぞ！";
-    if (maxMiss === v) return "基本の母音でつまずいてるぞ…落ち着いて指を動かせ！";
-    return "子音の切り替えが遅いな…もっとリズムを意識しろ！";
-  }
-
-  // ======================================================
-  // Supabase 保存
-  // ======================================================
-  async function saveScoreToSupabase(data) {
-    try {
-      const { error } = await client.from("score_logs").insert(data);
-      if (error) console.error("Supabase 保存エラー:", error);
-    } catch (e) {
-      console.error("Supabase 通信エラー:", e);
-    }
-  }
-
-  // ======================================================
-  // ゲーム終了
-  // ======================================================
-  function endGame() {
-    state = "end";
-
-    kiPower = 100;
-    updateKiBall();
-
-    document.body.classList.add("flash");
-    setTimeout(() => document.body.classList.remove("flash"), 300);
-
-    fireBeam();
-
-    const accuracy =
-      totalTyped > 0
-        ? Math.floor(((totalTyped - missCount) / totalTyped) * 100)
-        : 0;
-
-    const defeatedEnemy = getDefeatedEnemy(score);
-    const weaknessComment = getWeaknessComment(
-      accuracy,
-      missVowel,
-      missConsonant,
-      missYouon
-    );
-
-    const playerName = localStorage.getItem("playerName") || "名無し";
-
-    // ▼ 結果を保存
-    localStorage.setItem("score", score);
-    localStorage.setItem("maxCombo", maxCombo);
-    localStorage.setItem("accuracy", accuracy);
-    localStorage.setItem("totalTyped", totalTyped);
-    localStorage.setItem("missCount", missCount);
-    localStorage.setItem("defeatedEnemy", defeatedEnemy);
-    localStorage.setItem("weaknessComment", weaknessComment);
-
-    // ▼ Supabase 保存
-    saveScoreToSupabase({
-      name: playerName,
-      score: score,
-      max_combo: maxCombo,
-      accuracy: accuracy,
-      total_typed: totalTyped,
-      miss_count: missCount,
-      defeated_enemy: defeatedEnemy,
-      created_at: new Date().toISOString()
-    });
-
-    // ▼ 結果画面へ
-    setTimeout(() => {
-      location.href = "results.html";
-    }, 800);
-  }
-
-});
+  // ▼ 結果画面へ
+  setTimeout(() => {
+    location.href = "results.html";
+  }, 800);
+}
