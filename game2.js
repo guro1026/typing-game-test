@@ -47,38 +47,7 @@ function updateHUD() {
 }
 
 // ======================================================
-// ▶ カウントダウン
-// ======================================================
-function startCountdown() {
-  const cd = document.getElementById("countdown");
-  const startSound = document.getElementById("startSound");
-
-  cd.style.display = "block";
-  let count = 3;
-  cd.textContent = count;
-
-  const timer = setInterval(() => {
-    count--;
-
-    if (count > 0) {
-      cd.textContent = count;
-    } else if (count === 0) {
-      cd.textContent = "スタート！";
-      startSound.currentTime = 0;
-      startSound.play();
-    } else {
-      clearInterval(timer);
-      cd.style.display = "none";
-
-      // ▼ ゲーム開始
-      startTimer();
-      nextWord();
-    }
-  }, 1000);
-}
-
-// ======================================================
-// ▶ ゲーム開始（index.html?start=1 で呼ばれる）
+// ▶ ゲーム開始（countdown.html → index.html?start=1）
 // ======================================================
 window.startGame = function () {
 
@@ -160,11 +129,12 @@ window.startGame = function () {
   // ▼ コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
-  // ▼ カウントダウン開始
-  startCountdown();
-
   // ▼ CSV 読み込み
   loadCSV(selectedCourse);
+
+  // ▼ ゲーム開始（カウントダウンは countdown.html が担当）
+  startTimer();
+  nextWord();
 };
 
 // ======================================================
@@ -457,8 +427,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       seHit.volume = vol;
       seBeep.volume = vol;
     });
-  } else {
-    console.error("volume-slider が見つかりません");
   }
 
   // ▼ Supabase 初期化
