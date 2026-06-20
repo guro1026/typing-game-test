@@ -161,8 +161,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     localStorage.setItem("playerName", name);
 
-    document.getElementById("name-area").style.display = "none";
-    document.getElementById("course-buttons").style.display = "block";
+  // 名前入力エリアを消す
+  document.getElementById("name-area").style.display = "none";
+
+  // ★ 遊び方ボタンを表示
+  document.getElementById("howto-area").style.display = "block";
+
+  // ★ コース選択はまだ表示しない
+  document.getElementById("course-buttons").style.display = "none";
   }
 
 
