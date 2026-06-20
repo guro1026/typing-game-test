@@ -1,118 +1,177 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>遊び方 - Typing Game</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    color: #fff;
-    font-family: "Yu Gothic", sans-serif;
-    text-align: center;
-  }
+  <meta charset="UTF-8">
+  <title>遊び方 - Typing Game</title>
 
-  #container {
-    margin-top: 5%;
-  }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      font-family: "Yu Gothic", sans-serif;
+      text-align: center;
+    }
 
-  h1 {
-    font-size: 48px;
-    text-shadow: 0 0 20px #fff;
-  }
+    #play-screen {
+      width: 100vw;
+      height: 100vh;
+      padding-top: 40px;
+    }
 
-  .box {
-    margin: 20px auto;
-    padding: 20px;
-    width: 70%;
-    background: rgba(255,255,255,0.1);
-    border: 2px solid #fff;
-    border-radius: 10px;
-    font-size: 22px;
-  }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px #fff;
+    }
 
-  .course-btn {
-    margin: 10px;
-    padding: 15px 30px;
-    font-size: 24px;
-    border-radius: 10px;
-    border: 2px solid #fff;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    cursor: pointer;
-  }
+    .section-title {
+      font-size: 28px;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #fff;
+    }
 
-  #start-msg {
-    margin-top: 40px;
-    font-size: 26px;
-    color: #ff0;
-    text-shadow: 0 0 10px #ff0;
-  }
-</style>
+    .btn-area {
+      margin: 10px auto 20px;
+    }
+
+    button {
+      padding: 12px 28px;
+      margin: 8px;
+      font-size: 22px;
+      border-radius: 10px;
+      border: 2px solid #fff;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* ★ 選択中のボタンを光らせる */
+    .selected {
+      background: #ffd700 !important;
+      color: #000 !important;
+      border: 3px solid #fff !important;
+      box-shadow: 0 0 15px #ffd700, 0 0 30px #ffea00;
+      transform: scale(1.1);
+    }
+
+    #start-hint {
+      margin-top: 40px;
+      font-size: 26px;
+      color: #ff0;
+      text-shadow: 0 0 10px #ff0;
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="container">
-  <h1>遊び方</h1>
+  <div id="play-screen">
 
-  <div class="box">
-    ・画面に表示されるローマ字をタイプして敵を倒せ！<br>
-    ・コンボをつなげると気弾が成長！<br>
-    ・10 / 15 / 20 コンボで覚醒倍率発動！<br>
-    ・60秒以内にどれだけ倒せるか勝負！
+    <h1>遊び方</h1>
+
+    <div>
+      ・画面に表示されるローマ字をタイプして敵を倒せ！<br>
+      ・コンボをつなげると気弾が成長！<br>
+      ・10 / 15 / 20 コンボで奥義を発動！<br>
+      ・60秒以内にどれだけ倒せるかが勝負！
+    </div>
+
+    <!-- BGM設定 -->
+    <div class="section-title">BGM設定</div>
+    <div class="btn-area">
+      <button class="bgm-btn" data-mode="on">BGMあり</button>
+      <button class="bgm-btn" data-mode="off">BGMなし</button>
+    </div>
+
+    <!-- コース選択 -->
+    <div class="section-title">コース選択</div>
+    <div class="btn-area">
+      <button class="course-btn" data-course="easy">EASY</button>
+      <button class="course-btn" data-course="business">BUSINESS</button>
+      <button class="course-btn" data-course="it">IT</button>
+      <button class="course-btn" data-course="mail">MAIL</button>
+    </div>
+
+    <div id="start-hint">スペースキーでゲーム開始</div>
+
   </div>
 
-  <div class="box">
-    <strong>BGM設定</strong><br><br>
-    <button id="bgm-on">BGMあり</button>
-    <button id="bgm-off">BGMなし</button>
-  </div>
+  <script>
+    /* ============================================================
+       🟦 BGM ボタン選択
+       ============================================================ */
+    document.querySelectorAll(".bgm-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
 
-  <div class="box">
-    <strong>コース選択</strong><br><br>
-    <button class="course-btn" data-course="easy">EASY</button>
-    <button class="course-btn" data-course="business">BUSINESS</button>
-    <button class="course-btn" data-course="it">IT</button>
-    <button class="course-btn" data-course="mail">MAIL</button>
-  </div>
+        // 全ボタンの選択解除
+        document.querySelectorAll(".bgm-btn")
+          .forEach(b => b.classList.remove("selected"));
 
-  <div id="start-msg">スペースキーでゲーム開始</div>
-</div>
+        // 選択されたボタンを光らせる
+        btn.classList.add("selected");
 
-<script>
-  let bgmEnabled = true;
-  let selectedCourse = null;
-
-  // BGM設定
-  document.getElementById("bgm-on").addEventListener("click", () => {
-    bgmEnabled = true;
-    localStorage.setItem("bgmEnabled", "1");
-  });
-
-  document.getElementById("bgm-off").addEventListener("click", () => {
-    bgmEnabled = false;
-    localStorage.setItem("bgmEnabled", "0");
-  });
-
-  // コース選択
-  document.querySelectorAll(".course-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedCourse = btn.dataset.course;
-      localStorage.setItem("selectedCourse", selectedCourse);
+        // 設定保存
+        const mode = btn.dataset.mode;
+        localStorage.setItem("bgmEnabled", mode === "on" ? "1" : "0");
+      });
     });
-  });
-// スペースでゲーム開始
-document.addEventListener("keydown", e => {
-  if (e.code === "Space" && selectedCourse) {
-    location.href = "index.html?start=1";
-  }
-});
 
-</script>
-  
+    /* ============================================================
+       🟦 コース選択ボタン
+       ============================================================ */
+    document.querySelectorAll(".course-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
 
+        // 全ボタンの選択解除
+        document.querySelectorAll(".course-btn")
+          .forEach(b => b.classList.remove("selected"));
+
+        // 選択されたボタンを光らせる
+        btn.classList.add("selected");
+
+        // コース保存
+        localStorage.setItem("selectedCourse", btn.dataset.course);
+      });
+    });
+
+    /* ============================================================
+       🟦 スペースキーでゲーム開始
+       ============================================================ */
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") {
+        location.href = "index.html?start=1";
+      }
+    });
+
+    /* ============================================================
+       🟦 前回の選択状態を復元（ユーザーに優しい）
+       ============================================================ */
+    window.addEventListener("DOMContentLoaded", () => {
+
+      // BGM
+      const bgm = localStorage.getItem("bgmEnabled");
+      if (bgm === "1") {
+        document.querySelector('[data-mode="on"]')?.classList.add("selected");
+      } else if (bgm === "0") {
+        document.querySelector('[data-mode="off"]')?.classList.add("selected");
+      }
+
+      // コース
+      const course = localStorage.getItem("selectedCourse");
+      if (course) {
+        document.querySelector(`[data-course="${course}"]`)
+          ?.classList.add("selected");
+      }
+    });
+  </script>
 
 </body>
 </html>
