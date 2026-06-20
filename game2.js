@@ -1,24 +1,65 @@
 // ======================================================
-// 🔊 グローバル変数
+// 🔊 グローバル変数（どこからでも使える）
+// ------------------------------------------------------
+// ※ startGame() が index.html から呼ばれるため、
+//    すべてのゲーム変数はグローバルに置く必要がある。
 // ======================================================
+
+// 音関連
 let bgm, seHit, seBeep, volumeSlider;
+
+// ゲーム状態
+let state = "title";          // ← startGame() が先に呼ばれてもOK
+let selectedCourse = null;
+
+// お題データ
+let words = [];
+let currentJP = "";
+let currentRomaji = "";
+let originalRomaji = "";
+
+// スコア関連
+let score = 0;
+let combo = 0;
+let maxCombo = 0;
+
+// タイマー
+let timeLeft = 60;
+let timerInterval = null;
+
+// タイピング統計
+let totalTyped = 0;
+let missCount = 0;
+let missVowel = 0;
+let missConsonant = 0;
+let missYouon = 0;
+
+// 気弾パワー
+let kiPower = 0;
 
 // ======================================================
 // ▶ ゲーム開始（index.html?start=1 で呼ばれる）
+// ------------------------------------------------------
+// ※ window に公開しておくことで index.html から呼べる。
 // ======================================================
 window.startGame = function () {
+
+  // ゲーム状態を「読み込み中」に変更
   state = "loading";
 
+  // ▼ BGM ON/OFF の反映
   const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
   if (!bgmEnabled) {
     bgm.volume = 0;
     volumeSlider.value = 0;
   }
 
+  // ▼ タイトル画面 → ゲーム画面へ切り替え
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
   document.getElementById("volume-area").style.display = "none";
 
+  // ▼ プレイヤー名から性別を判定 → キャラ画像・背景を切り替え
   const playerName = localStorage.getItem("playerName") || "";
   const character = document.getElementById("character");
   const kiBall = document.getElementById("ki-ball");
@@ -30,6 +71,7 @@ window.startGame = function () {
       const lines = text.trim().split("\n").slice(1);
       let gender = "male";
 
+      // CSV から性別を検索
       for (const line of lines) {
         const [name, g] = line.split(",").map(s => s.trim());
         if (name === playerName) {
@@ -40,6 +82,7 @@ window.startGame = function () {
 
       localStorage.setItem("gender", gender);
 
+      // ▼ キャラ画像切り替え
       if (gender === "female") {
         character.src = "images/character/women/kiball_woman.png";
         document.body.classList.add("pink-theme");
@@ -48,17 +91,20 @@ window.startGame = function () {
         document.body.classList.remove("pink-theme");
       }
 
+      // ▼ 背景切り替え
       bgLayer.style.backgroundImage =
         gender === "female"
           ? 'url("images/bg/game_bg_woman.png")'
           : 'url("images/bg/game_bg_man.png")';
 
+      // ▼ 気弾の色切り替え
       kiBall.style.backgroundImage =
         gender === "female"
           ? 'url("images/kiball/pink.png")'
           : 'url("images/kiball/blue.png")';
     });
 
+  // ▼ ステータス初期化
   score = 0;
   combo = 0;
   maxCombo = 0;
@@ -72,20 +118,25 @@ window.startGame = function () {
 
   updateHUD();
 
+  // ▼ 気弾初期化
   kiPower = 0;
   const ball = document.getElementById("ki-ball");
   ball.classList.remove("white", "gold", "pulse");
   ball.classList.add("blue");
   ball.style.transform = "translate(-50%, -50%) scale(0.02)";
 
+  // ▼ play.html で選んだコースを取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
+  // ▼ タイマー開始 & CSV 読み込み
   startTimer();
   loadCSV(selectedCourse);
 };
 
 // ======================================================
-// 📌 DOMContentLoaded（初期化）
+// 📌 DOMContentLoaded（ページ読み込み後に実行）
+// ------------------------------------------------------
+// ※ BGM 初期化、Supabase 初期化、名前入力処理など。
 // ======================================================
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -101,6 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   bgm.loop = true;
   bgm.volume = 0;
 
+  // ▼ 自動再生ブロック対策
   bgm.play().catch(() => {
     const once = () => {
       bgm.play().catch(() => {});
@@ -111,6 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener("keydown", once);
   });
 
+  // ▼ 音量スライダー
   volumeSlider.addEventListener("input", () => {
     const vol = volumeSlider.value / 100;
     bgm.volume = vol;
@@ -143,30 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadConfig();
 
   // ======================================================
-  // 🎮 ゲーム状態管理
-  // ======================================================
-  state = "title";
-  selectedCourse = null;
-
-  words = [];
-  currentJP = "";
-  currentRomaji = "";
-  originalRomaji = "";
-
-  score = 0;
-  combo = 0;
-  maxCombo = 0;
-  timeLeft = 60;
-  timerInterval = null;
-
-  totalTyped = 0;
-  missCount = 0;
-  missVowel = 0;
-  missConsonant = 0;
-  missYouon = 0;
-
-  // ======================================================
-  // 📝 名前入力（新仕様）
+  // 📝 名前入力（play.html に移動するだけ）
   // ======================================================
   document.getElementById("name-submit").addEventListener("click", () => {
     const input = document.getElementById("name-input");
@@ -191,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // ======================================================
-  // ⏱ タイマー
+  // ⏱ タイマー処理
   // ======================================================
   function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
@@ -265,6 +295,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!target) return;
 
+    // ▼ 正解
     if (key === target) {
       seHit.currentTime = 0;
       seHit.play();
@@ -279,6 +310,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const willClear = currentRomaji.length === 0;
       const nextCombo = combo + 1;
 
+      // ▼ 覚醒ボーナス
       if (willClear) {
         if (nextCombo === 10) add *= 10;
         if (nextCombo === 15) add *= 15;
@@ -299,6 +331,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
     } else {
+      // ▼ ミス
       seBeep.currentTime = 0;
       seBeep.play();
 
@@ -330,8 +363,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ======================================================
   // 気弾成長
   // ======================================================
-  let kiPower = 0;
-
   function updateKiBall() {
     const ball = document.getElementById("ki-ball");
     const scale = 0.1 + (kiPower / 100) * 0.5;
@@ -427,6 +458,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const playerName = localStorage.getItem("playerName") || "名無し";
 
+    // ▼ 結果を保存（results.html で使う）
     localStorage.setItem("score", score);
     localStorage.setItem("maxCombo", maxCombo);
     localStorage.setItem("accuracy", accuracy);
@@ -435,6 +467,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem("defeatedEnemy", defeatedEnemy);
     localStorage.setItem("weaknessComment", weaknessComment);
 
+    // ▼ Supabase にも保存
     saveScoreToSupabase({
       name: playerName,
       score: score,
@@ -446,6 +479,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       created_at: new Date().toISOString()
     });
 
+    // ▼ 結果画面へ
     setTimeout(() => {
       location.href = "results.html";
     }, 800);
