@@ -3,6 +3,90 @@
 // ======================================================
 let bgm, seHit, seBeep, volumeSlider;
 
+// ======================================================
+// ▶ ゲーム開始（index.html?start=1 で呼ばれる）
+// ======================================================
+window.startGame = function () {
+  state = "loading";
+
+  const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
+  if (!bgmEnabled) {
+    bgm.volume = 0;
+    volumeSlider.value = 0;
+  }
+
+  document.getElementById("title-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "block";
+  document.getElementById("volume-area").style.display = "none";
+
+  const playerName = localStorage.getItem("playerName") || "";
+  const character = document.getElementById("character");
+  const kiBall = document.getElementById("ki-ball");
+  const bgLayer = document.getElementById("bg-layer-game");
+
+  fetch("employee_list.csv")
+    .then(res => res.text())
+    .then(text => {
+      const lines = text.trim().split("\n").slice(1);
+      let gender = "male";
+
+      for (const line of lines) {
+        const [name, g] = line.split(",").map(s => s.trim());
+        if (name === playerName) {
+          gender = g;
+          break;
+        }
+      }
+
+      localStorage.setItem("gender", gender);
+
+      if (gender === "female") {
+        character.src = "images/character/women/kiball_woman.png";
+        document.body.classList.add("pink-theme");
+      } else {
+        character.src = "images/character/men/kiball_man.png";
+        document.body.classList.remove("pink-theme");
+      }
+
+      bgLayer.style.backgroundImage =
+        gender === "female"
+          ? 'url("images/bg/game_bg_woman.png")'
+          : 'url("images/bg/game_bg_man.png")';
+
+      kiBall.style.backgroundImage =
+        gender === "female"
+          ? 'url("images/kiball/pink.png")'
+          : 'url("images/kiball/blue.png")';
+    });
+
+  score = 0;
+  combo = 0;
+  maxCombo = 0;
+  timeLeft = 60;
+
+  totalTyped = 0;
+  missCount = 0;
+  missVowel = 0;
+  missConsonant = 0;
+  missYouon = 0;
+
+  updateHUD();
+
+  kiPower = 0;
+  const ball = document.getElementById("ki-ball");
+  ball.classList.remove("white", "gold", "pulse");
+  ball.classList.add("blue");
+  ball.style.transform = "translate(-50%, -50%) scale(0.02)";
+
+  selectedCourse = localStorage.getItem("selectedCourse");
+
+  startTimer();
+  loadCSV(selectedCourse);
+};
+
+// ======================================================
+// 📌 DOMContentLoaded（初期化）
+// ======================================================
 document.addEventListener("DOMContentLoaded", async () => {
 
   // ======================================================
@@ -61,25 +145,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ======================================================
   // 🎮 ゲーム状態管理
   // ======================================================
-  let state = "title";
-  let selectedCourse = null;
+  state = "title";
+  selectedCourse = null;
 
-  let words = [];
-  let currentJP = "";
-  let currentRomaji = "";
-  let originalRomaji = "";
+  words = [];
+  currentJP = "";
+  currentRomaji = "";
+  originalRomaji = "";
 
-  let score = 0;
-  let combo = 0;
-  let maxCombo = 0;
-  let timeLeft = 60;
-  let timerInterval = null;
+  score = 0;
+  combo = 0;
+  maxCombo = 0;
+  timeLeft = 60;
+  timerInterval = null;
 
-  let totalTyped = 0;
-  let missCount = 0;
-  let missVowel = 0;
-  let missConsonant = 0;
-  let missYouon = 0;
+  totalTyped = 0;
+  missCount = 0;
+  missVowel = 0;
+  missConsonant = 0;
+  missYouon = 0;
 
   // ======================================================
   // 📝 名前入力（新仕様）
@@ -105,87 +189,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ★ 新仕様：play.html に移動
     location.href = "play.html";
   });
-
-  // ======================================================
-  // ▶ ゲーム開始（index.html?start=1 で呼ばれる）
-  // ======================================================
-  window.startGame = function () {
-    state = "loading";
-
-    const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-    if (!bgmEnabled) {
-      bgm.volume = 0;
-      volumeSlider.value = 0;
-    }
-
-    document.getElementById("title-screen").style.display = "none";
-    document.getElementById("game-screen").style.display = "block";
-    document.getElementById("volume-area").style.display = "none";
-
-    const playerName = localStorage.getItem("playerName") || "";
-    const character = document.getElementById("character");
-    const kiBall = document.getElementById("ki-ball");
-    const bgLayer = document.getElementById("bg-layer-game");
-
-    fetch("employee_list.csv")
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.trim().split("\n").slice(1);
-        let gender = "male";
-
-        for (const line of lines) {
-          const [name, g] = line.split(",").map(s => s.trim());
-          if (name === playerName) {
-            gender = g;
-            break;
-          }
-        }
-
-        localStorage.setItem("gender", gender);
-
-        if (gender === "female") {
-          character.src = "images/character/women/kiball_woman.png";
-          document.body.classList.add("pink-theme");
-        } else {
-          character.src = "images/character/men/kiball_man.png";
-          document.body.classList.remove("pink-theme");
-        }
-
-        bgLayer.style.backgroundImage =
-          gender === "female"
-            ? 'url("images/bg/game_bg_woman.png")'
-            : 'url("images/bg/game_bg_man.png")';
-
-        kiBall.style.backgroundImage =
-          gender === "female"
-            ? 'url("images/kiball/pink.png")'
-            : 'url("images/kiball/blue.png")';
-      });
-
-    score = 0;
-    combo = 0;
-    maxCombo = 0;
-    timeLeft = 60;
-
-    totalTyped = 0;
-    missCount = 0;
-    missVowel = 0;
-    missConsonant = 0;
-    missYouon = 0;
-
-    updateHUD();
-
-    kiPower = 0;
-    const ball = document.getElementById("ki-ball");
-    ball.classList.remove("white", "gold", "pulse");
-    ball.classList.add("blue");
-    ball.style.transform = "translate(-50%, -50%) scale(0.02)";
-
-    selectedCourse = localStorage.getItem("selectedCourse");
-
-    startTimer();
-    loadCSV(selectedCourse);
-  };
 
   // ======================================================
   // ⏱ タイマー
