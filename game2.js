@@ -1,41 +1,44 @@
 // ======================================================
-// 🔊 グローバル変数（startGame が先に呼ばれてもOK）
+// 🔊 グローバル初期化（startGame より先に作る）
 // ======================================================
+let bgm = new Audio("sounds/bgm.mp3");
+let seHit = new Audio("sounds/hit.mp3");
+let seBeep = new Audio("sounds/beep.mp3");
 
-// 音関連
-let bgm, seHit, seBeep, volumeSlider;
+bgm.loop = true;
+bgm.volume = 0;
 
-// ゲーム状態
+// ======================================================
+// 🟦 グローバル変数
+// ======================================================
 let state = "title";
 let selectedCourse = null;
 
-// お題データ
 let words = [];
 let currentJP = "";
 let currentRomaji = "";
 let originalRomaji = "";
 
-// スコア関連
 let score = 0;
 let combo = 0;
 let maxCombo = 0;
 
-// タイマー
 let timeLeft = 60;
 let timerInterval = null;
 
-// タイピング統計
 let totalTyped = 0;
 let missCount = 0;
 let missVowel = 0;
 let missConsonant = 0;
 let missYouon = 0;
 
-// 気弾パワー
 let kiPower = 0;
 
+let volumeSlider;
+let client = null;
+
 // ======================================================
-// 🟦 HUD 更新（startGame からも呼ぶため外に出す）
+// 🟦 HUD 更新
 // ======================================================
 function updateHUD() {
   document.getElementById("hud-score").textContent = score;
@@ -52,10 +55,7 @@ window.startGame = function () {
 
   // ▼ BGM ON/OFF
   const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-  if (!bgmEnabled) {
-    bgm.volume = 0;
-    volumeSlider.value = 0;
-  }
+  bgm.volume = bgmEnabled ? (volumeSlider.value / 100) : 0;
 
   // ▼ 画面切り替え
   document.getElementById("title-screen").style.display = "none";
@@ -131,97 +131,9 @@ window.startGame = function () {
   startTimer();
   loadCSV(selectedCourse);
 };
-// ======================================================
-// 📌 DOMContentLoaded（初期化処理）
-// ======================================================
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // ======================================================
-  // 🎵 BGM 初期化
-  // ======================================================
-  bgm = new Audio("sounds/bgm.mp3");
-  seHit = new Audio("sounds/hit.mp3");
-  seBeep = new Audio("sounds/beep.mp3");
-
-  volumeSlider = document.getElementById("volume-slider");
-
-  bgm.loop = true;
-  bgm.volume = 0;
-
-  // ▼ 自動再生ブロック対策
-  bgm.play().catch(() => {
-    const once = () => {
-      bgm.play().catch(() => {});
-      document.removeEventListener("click", once);
-      document.removeEventListener("keydown", once);
-    };
-    document.addEventListener("click", once);
-    document.addEventListener("keydown", once);
-  });
-
-  // ▼ 音量調整
-  volumeSlider.addEventListener("input", () => {
-    const vol = volumeSlider.value / 100;
-    bgm.volume = vol;
-    seHit.volume = vol;
-    seBeep.volume = vol;
-  });
-
-  // ======================================================
-  // 🔰 Supabase 初期化
-  // ======================================================
-  let SUPABASE_URL = "";
-  let SUPABASE_KEY = "";
-  let client = null;
-
-  async function loadConfig() {
-    try {
-      const res = await fetch("config.json");
-      const config = await res.json();
-      const env = config.env;
-
-      SUPABASE_URL = config.supabase[env].url;
-      SUPABASE_KEY = config.supabase[env].key;
-
-      client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    } catch (e) {
-      console.error("config.json の読み込みに失敗:", e);
-    }
-  }
-
-  await loadConfig();
-
-  // ======================================================
-  // 📝 名前入力（play.html に移動）
-  // ======================================================
-  document.getElementById("name-submit").addEventListener("click", () => {
-    const input = document.getElementById("name-input");
-    const error = document.getElementById("name-error");
-    const name = input.value.trim();
-
-    if (name === "") {
-      error.textContent = "※ 名前を入力してください";
-      input.classList.add("error");
-      seBeep.currentTime = 0;
-      seBeep.play();
-      return;
-    }
-
-    input.classList.remove("error");
-    error.textContent = "";
-
-    localStorage.setItem("playerName", name);
-
-    location.href = "play.html";
-  });
-
-  // ======================================================
-  // ⏱ タイマー（startGame から呼ばれるため外に出すべき）
-// ======================================================
-});
 
 // ======================================================
-// ⏱ タイマー（グローバル化）
+// ⏱ タイマー
 // ======================================================
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
@@ -238,7 +150,7 @@ function startTimer() {
 }
 
 // ======================================================
-// CSV 読み込み（グローバル化）
+// CSV 読み込み
 // ======================================================
 function loadCSV(course) {
   fetch(`words_${course}.csv`)
@@ -251,7 +163,7 @@ function loadCSV(course) {
 }
 
 // ======================================================
-// 次のお題（グローバル化）
+// 次のお題
 // ======================================================
 function nextWord() {
   if (timeLeft <= 0) return;
@@ -268,8 +180,9 @@ function nextWord() {
 
   state = "playing";
 }
+
 // ======================================================
-// キー入力（グローバル化）
+// キー入力
 // ======================================================
 document.addEventListener("keydown", e => {
   if (state !== "playing") return;
@@ -300,7 +213,6 @@ document.addEventListener("keydown", e => {
     const willClear = currentRomaji.length === 0;
     const nextCombo = combo + 1;
 
-    // ▼ 覚醒ボーナス
     if (willClear) {
       if (nextCombo === 10) add *= 10;
       if (nextCombo === 15) add *= 15;
@@ -337,7 +249,7 @@ document.addEventListener("keydown", e => {
 });
 
 // ======================================================
-// キーボード光演出（グローバル化）
+// キーボード光演出
 // ======================================================
 function highlightKey(key) {
   const upper = key.toUpperCase();
@@ -351,7 +263,7 @@ function highlightKey(key) {
 }
 
 // ======================================================
-// 気弾成長（グローバル化）
+// 気弾成長
 // ======================================================
 function updateKiBall() {
   const ball = document.getElementById("ki-ball");
@@ -368,7 +280,7 @@ function growKi() {
 }
 
 // ======================================================
-// ビーム演出（グローバル化）
+// ビーム演出
 // ======================================================
 function fireBeam() {
   const beam = document.getElementById("beam");
@@ -377,7 +289,7 @@ function fireBeam() {
 }
 
 // ======================================================
-// 敵撃破ロジック（グローバル化）
+// 敵撃破ロジック
 // ======================================================
 function getDefeatedEnemy(score) {
   if (score <= 10000) return "サイバイマン";
@@ -394,7 +306,7 @@ function getDefeatedEnemy(score) {
 }
 
 // ======================================================
-// 弱点分析コメント（グローバル化）
+// 弱点分析コメント
 // ======================================================
 function getWeaknessComment(accuracy, v, c, y) {
   if (accuracy >= 95) return "お前…強くなったな。もう上級者の領域だぞ。";
@@ -408,7 +320,7 @@ function getWeaknessComment(accuracy, v, c, y) {
 }
 
 // ======================================================
-// Supabase 保存（グローバル化）
+// Supabase 保存
 // ======================================================
 async function saveScoreToSupabase(data) {
   try {
@@ -420,7 +332,7 @@ async function saveScoreToSupabase(data) {
 }
 
 // ======================================================
-// ゲーム終了（グローバル化）
+// ゲーム終了
 // ======================================================
 function endGame() {
   state = "end";
@@ -474,3 +386,55 @@ function endGame() {
     location.href = "results.html";
   }, 800);
 }
+
+// ======================================================
+// ESCキーでタイトルへ強制帰還
+// ======================================================
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+
+    if (timerInterval) clearInterval(timerInterval);
+
+    if (bgm) {
+      bgm.pause();
+      bgm.currentTime = 0;
+    }
+
+    score = 0;
+    combo = 0;
+    maxCombo = 0;
+    timeLeft = 60;
+
+    location.href = "index.html";
+  }
+});
+
+// ======================================================
+// DOMContentLoaded（UI 初期化）
+// ======================================================
+document.addEventListener("DOMContentLoaded", async () => {
+
+  volumeSlider = document.getElementById("volume-slider");
+
+  // ▼ 音量調整
+  volumeSlider.addEventListener("input", () => {
+    const vol = volumeSlider.value / 100;
+    bgm.volume = vol;
+    seHit.volume = vol;
+    seBeep.volume = vol;
+  });
+
+  // ▼ Supabase 初期化
+  try {
+    const res = await fetch("config.json");
+    const config = await res.json();
+    const env = config.env;
+
+    client = supabase.createClient(
+      config.supabase[env].url,
+      config.supabase[env].key
+    );
+  } catch (e) {
+    console.error("config.json 読み込みエラー:", e);
+  }
+});

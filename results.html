@@ -84,7 +84,6 @@
 
     <div id="result-title">RESULT</div>
 
-    <!-- 性別で切り替わるキャラシルエット -->
     <img id="character-image" src="" alt="character">
 
     <div class="result-box">
@@ -108,7 +107,7 @@
       <span id="r-comment"></span>
     </div>
 
-    <!-- ★ 自己ベスト & 自分の順位 -->
+    <!-- 自己ベスト & 順位 -->
     <div id="my-ranking-box" class="result-box">
       <div>自己ベスト：<span id="myBestScore">--</span></div>
       <div>今月の順位：<span id="myRank">--</span></div>
@@ -119,7 +118,7 @@
   </div>
 
   <!-- ============================================================
-       🟦 メインスクリプト（module 必須）
+       🟦 メインスクリプト
        ============================================================ -->
   <script type="module">
 
@@ -170,7 +169,7 @@
     document.getElementById("defeated-enemy").textContent = defeatedEnemy;
 
     /* ------------------------------------------------------------
-       🟦 性別で背景切り替え
+       🟦 背景切り替え
        ------------------------------------------------------------ */
     const resultScreen = document.getElementById("results-screen");
 
@@ -183,7 +182,7 @@
     }
 
     /* ------------------------------------------------------------
-       🟦 キャラシルエット切り替え
+       🟦 キャラ画像切り替え
        ------------------------------------------------------------ */
     const charImg = document.getElementById("character-image");
 
@@ -228,17 +227,24 @@
         .lt("created_at", endOfMonth)
         .order("score", { ascending: false });
 
-      // ▼ data が null または空ならランク外
+      // ▼ 通信エラー
+      if (error) {
+        console.error("Supabase エラー:", error);
+        document.getElementById("myRank").textContent = "--";
+        return;
+      }
+
+      // ▼ data が null または空
       if (!Array.isArray(data) || data.length === 0) {
         document.getElementById("myRank").textContent = "--";
         return;
       }
 
+      // ▼ 自分の順位
       const index = data.findIndex(row => row.name === playerName);
-      const rank = index >= 0 ? index + 1 : "--";
 
       document.getElementById("myRank").textContent =
-        rank === "--" ? "--" : `${rank} 位`;
+        index >= 0 ? `${index + 1} 位` : "--";
     }
 
     loadMyBestScore();
