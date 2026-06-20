@@ -1,5 +1,5 @@
 // ======================================================
-// 🔊 グローバル初期化（startGame より先に作る）
+// 🔊 グローバル初期化
 // ======================================================
 let bgm = new Audio("sounds/bgm.mp3");
 let seHit = new Audio("sounds/hit.mp3");
@@ -47,6 +47,37 @@ function updateHUD() {
 }
 
 // ======================================================
+// ▶ カウントダウン
+// ======================================================
+function startCountdown() {
+  const cd = document.getElementById("countdown");
+  const startSound = document.getElementById("startSound");
+
+  cd.style.display = "block";
+  let count = 3;
+  cd.textContent = count;
+
+  const timer = setInterval(() => {
+    count--;
+
+    if (count > 0) {
+      cd.textContent = count;
+    } else if (count === 0) {
+      cd.textContent = "スタート！";
+      startSound.currentTime = 0;
+      startSound.play();
+    } else {
+      clearInterval(timer);
+      cd.style.display = "none";
+
+      // ▼ ゲーム開始
+      startTimer();
+      nextWord();
+    }
+  }, 1000);
+}
+
+// ======================================================
 // ▶ ゲーム開始（index.html?start=1 で呼ばれる）
 // ======================================================
 window.startGame = function () {
@@ -72,7 +103,7 @@ window.startGame = function () {
     .then(res => res.text())
     .then(text => {
       const lines = text.trim().split("\n").slice(1);
-      let gender = "male";
+      let gender = "unknown";
 
       for (const line of lines) {
         const [name, g] = line.split(",").map(s => s.trim());
@@ -87,9 +118,11 @@ window.startGame = function () {
       if (gender === "female") {
         character.src = "images/character/women/kiball_woman.png";
         document.body.classList.add("pink-theme");
-      } else {
+      } else if (gender === "male") {
         character.src = "images/character/men/kiball_man.png";
         document.body.classList.remove("pink-theme");
+      } else {
+        character.src = "images/character/men/kiball_man.png";
       }
 
       bgLayer.style.backgroundImage =
@@ -127,8 +160,10 @@ window.startGame = function () {
   // ▼ コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
-  // ▼ ゲーム開始
-  startTimer();
+  // ▼ カウントダウン開始
+  startCountdown();
+
+  // ▼ CSV 読み込み
   loadCSV(selectedCourse);
 };
 
@@ -158,7 +193,6 @@ function loadCSV(course) {
     .then(text => {
       const lines = text.trim().split("\n");
       words = lines.slice(1).map(line => line.trim());
-      nextWord();
     });
 }
 

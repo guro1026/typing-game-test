@@ -53,8 +53,30 @@
       background: rgba(255,255,255,0.3);
     }
 
-    /* ★ 選択中のボタンを光らせる */
-    .selected {
+    /* ============================
+       性別テーマ別の選択色
+       ============================ */
+
+    /* 男性 → 青 */
+    .theme-male .selected {
+      background: #00aaff !important;
+      color: #000 !important;
+      border: 3px solid #fff !important;
+      box-shadow: 0 0 15px #00aaff, 0 0 30px #0088dd;
+      transform: scale(1.1);
+    }
+
+    /* 女性 → ピンク */
+    .theme-female .selected {
+      background: #ff66cc !important;
+      color: #000 !important;
+      border: 3px solid #fff !important;
+      box-shadow: 0 0 15px #ff66cc, 0 0 30px #ff33aa;
+      transform: scale(1.1);
+    }
+
+    /* 不明 → 黄色 */
+    .theme-unknown .selected {
       background: #ffd700 !important;
       color: #000 !important;
       border: 3px solid #fff !important;
@@ -71,7 +93,8 @@
   </style>
 </head>
 
-<body>
+<!-- 初期状態は不明（黄色） -->
+<body class="theme-unknown">
 
   <div id="play-screen">
 
@@ -111,14 +134,11 @@
     document.querySelectorAll(".bgm-btn").forEach(btn => {
       btn.addEventListener("click", () => {
 
-        // 全ボタンの選択解除
         document.querySelectorAll(".bgm-btn")
           .forEach(b => b.classList.remove("selected"));
 
-        // 選択されたボタンを光らせる
         btn.classList.add("selected");
 
-        // 設定保存
         const mode = btn.dataset.mode;
         localStorage.setItem("bgmEnabled", mode === "on" ? "1" : "0");
       });
@@ -130,14 +150,11 @@
     document.querySelectorAll(".course-btn").forEach(btn => {
       btn.addEventListener("click", () => {
 
-        // 全ボタンの選択解除
         document.querySelectorAll(".course-btn")
           .forEach(b => b.classList.remove("selected"));
 
-        // 選択されたボタンを光らせる
         btn.classList.add("selected");
 
-        // コース保存
         localStorage.setItem("selectedCourse", btn.dataset.course);
       });
     });
@@ -150,21 +167,34 @@
         location.href = "index.html?start=1";
       }
     });
-	/* ============================================================
-	   🟦 ESCキーでタイトル(index.html)へ戻る
-	   ============================================================ */
-	document.addEventListener("keydown", e => {
-	  if (e.key === "Escape") {
-	    location.href = "index.html";
-	  }
-	});
 
     /* ============================================================
-       🟦 前回の選択状態を復元
+       🟦 ESCキーでタイトルへ戻る
+       ============================================================ */
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        location.href = "index.html";
+      }
+    });
+
+    /* ============================================================
+       🟦 性別テーマを反映（male / female / unknown）
        ============================================================ */
     window.addEventListener("DOMContentLoaded", () => {
+      const gender = localStorage.getItem("gender");
 
-      // BGM
+      if (gender === "female") {
+        document.body.classList.remove("theme-male", "theme-unknown");
+        document.body.classList.add("theme-female");
+      } else if (gender === "male") {
+        document.body.classList.remove("theme-female", "theme-unknown");
+        document.body.classList.add("theme-male");
+      } else {
+        document.body.classList.remove("theme-male", "theme-female");
+        document.body.classList.add("theme-unknown");
+      }
+
+      // BGM 復元
       const bgm = localStorage.getItem("bgmEnabled");
       if (bgm === "1") {
         document.querySelector('[data-mode="on"]')?.classList.add("selected");
@@ -172,7 +202,7 @@
         document.querySelector('[data-mode="off"]')?.classList.add("selected");
       }
 
-      // コース
+      // コース復元
       const course = localStorage.getItem("selectedCourse");
       if (course) {
         document.querySelector(`[data-course="${course}"]`)
