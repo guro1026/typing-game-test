@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>カウントダウン</title>
+  <style>
+    body {
+      background: #000;
+      color: #00eaff;
+      font-family: "Yu Gothic", sans-serif;
+      text-align: center;
+      margin: 0;
+      padding-top: 120px;
+    }
+    #count {
+      font-size: 360px;
+      text-shadow: 0 0 20px #00eaff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="count">3</div>
+
+  <audio id="startSound" src="sounds/start.mp3" preload="auto"></audio>
+
+  <script>
+    let n = 3;
+    const el = document.getElementById("count");
+    const se = document.getElementById("startSound");
+
+    const timer = setInterval(() => {
+      n--;
+
+      if (n > 0) {
+        el.textContent = n;
+      } else if (n === 0) {
+        el.textContent = "START!";
+        se.play();
+      } else {
+        clearInterval(timer);
+        location.href = "index.html?start=1";
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
