@@ -103,17 +103,13 @@
       localStorage.setItem("selectedCourse", selectedCourse);
     });
   });
+// スペースでゲーム開始
+document.addEventListener("keydown", e => {
+  if (e.code === "Space" && selectedCourse) {
+    location.href = "index.html?start=1";
+  }
+});
 
-  // スペースでゲーム開始
-  document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(location.search);
-
-    // play.html → index.html?start=1 で戻ってきたらゲーム開始
-    if (params.get("start") === "1") {
-      const course = localStorage.getItem("selectedCourse");
-      if (course) startGame();
-    }
-  });
 </script>
   
 
