@@ -105,13 +105,18 @@
   });
 
   // スペースでゲーム開始
-  document.addEventListener("keydown", e => {
-    if (e.code === "Space" && selectedCourse) {
-      // index.html に戻ってゲーム開始
-      location.href = "index.html?start=1";
+  document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(location.search);
+
+    // play.html → index.html?start=1 で戻ってきたらゲーム開始
+    if (params.get("start") === "1") {
+      const course = localStorage.getItem("selectedCourse");
+      if (course) startGame();
     }
   });
 </script>
+  
+
 
 </body>
 </html>
