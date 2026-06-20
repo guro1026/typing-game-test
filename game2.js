@@ -1,31 +1,22 @@
 // ======================================================
-// 🔊 グローバル変数（どの関数からも使えるようにする）
+// 🔊 グローバル変数
 // ======================================================
 let bgm, seHit, seBeep, volumeSlider;
 
-
-// ======================================================
-// 📌 DOM が読み込まれてから実行（HTML が先に必要なため）
-// ======================================================
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // ============================
-  // 🎵 BGM / SE / スライダー初期化
-  // ============================
-
-  // ▼ 音声ファイル読み込み
+  // ======================================================
+  // 🎵 BGM / SE 初期化
+  // ======================================================
   bgm = new Audio("sounds/bgm.mp3");
   seHit = new Audio("sounds/hit.mp3");
   seBeep = new Audio("sounds/beep.mp3");
 
-  // ▼ スライダー取得
   volumeSlider = document.getElementById("volume-slider");
 
-  // ▼ BGM 設定
   bgm.loop = true;
-  bgm.volume = 0; // 初期は無音
+  bgm.volume = 0;
 
-  // ▼ 自動再生ブロック対策
   bgm.play().catch(() => {
     const once = () => {
       bgm.play().catch(() => {});
@@ -36,15 +27,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener("keydown", once);
   });
 
-  // ▼ スライダーで BGM & SE の音量を統一
   volumeSlider.addEventListener("input", () => {
     const vol = volumeSlider.value / 100;
     bgm.volume = vol;
     seHit.volume = vol;
     seBeep.volume = vol;
   });
-
-
 
   // ======================================================
   // 🔰 Supabase 初期化
@@ -63,17 +51,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       SUPABASE_KEY = config.supabase[env].key;
 
       client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-      console.log(`Supabase 初期化完了！環境 → ${env}`);
     } catch (e) {
       console.error("config.json の読み込みに失敗:", e);
     }
   }
 
-  // ▼ Supabase を使える状態にする
   await loadConfig();
-
-
 
   // ======================================================
   // 🎮 ゲーム状態管理
@@ -92,191 +75,117 @@ document.addEventListener("DOMContentLoaded", async () => {
   let timeLeft = 60;
   let timerInterval = null;
 
-  // 弱点分析用
   let totalTyped = 0;
   let missCount = 0;
   let missVowel = 0;
   let missConsonant = 0;
   let missYouon = 0;
 
-
-
   // ======================================================
-  // ⌨ ESC でタイトルへ戻る
+  // 📝 名前入力（新仕様）
   // ======================================================
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") {
-      returnToTitle();
+  document.getElementById("name-submit").addEventListener("click", () => {
+    const input = document.getElementById("name-input");
+    const error = document.getElementById("name-error");
+    const name = input.value.trim();
+
+    if (name === "") {
+      error.textContent = "※ 名前を入力してください";
+      input.classList.add("error");
+      seBeep.currentTime = 0;
+      seBeep.play();
+      return;
     }
+
+    input.classList.remove("error");
+    error.textContent = "";
+
+    localStorage.setItem("playerName", name);
+
+    // ★ 新仕様：play.html に移動
+    location.href = "play.html";
   });
 
-
   // ======================================================
-  // 🏠 タイトルへ戻る処理
+  // ▶ ゲーム開始（index.html?start=1 で呼ばれる）
   // ======================================================
-  function returnToTitle() {
-    if (timerInterval) clearInterval(timerInterval);
+  window.startGame = function () {
+    state = "loading";
 
-    state = "title";
+    const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
+    if (!bgmEnabled) {
+      bgm.volume = 0;
+      volumeSlider.value = 0;
+    }
+
+    document.getElementById("title-screen").style.display = "none";
+    document.getElementById("game-screen").style.display = "block";
+    document.getElementById("volume-area").style.display = "none";
+
+    const playerName = localStorage.getItem("playerName") || "";
+    const character = document.getElementById("character");
+    const kiBall = document.getElementById("ki-ball");
+    const bgLayer = document.getElementById("bg-layer-game");
+
+    fetch("employee_list.csv")
+      .then(res => res.text())
+      .then(text => {
+        const lines = text.trim().split("\n").slice(1);
+        let gender = "male";
+
+        for (const line of lines) {
+          const [name, g] = line.split(",").map(s => s.trim());
+          if (name === playerName) {
+            gender = g;
+            break;
+          }
+        }
+
+        localStorage.setItem("gender", gender);
+
+        if (gender === "female") {
+          character.src = "images/character/women/kiball_woman.png";
+          document.body.classList.add("pink-theme");
+        } else {
+          character.src = "images/character/men/kiball_man.png";
+          document.body.classList.remove("pink-theme");
+        }
+
+        bgLayer.style.backgroundImage =
+          gender === "female"
+            ? 'url("images/bg/game_bg_woman.png")'
+            : 'url("images/bg/game_bg_man.png")';
+
+        kiBall.style.backgroundImage =
+          gender === "female"
+            ? 'url("images/kiball/pink.png")'
+            : 'url("images/kiball/blue.png")';
+      });
+
     score = 0;
     combo = 0;
     maxCombo = 0;
     timeLeft = 60;
 
-    // ▼ 音量を 0 に戻す（タイトルは無音スタート）
-    volumeSlider.value = 0;
-    bgm.volume = 0;
-    seHit.volume = 0;
-    seBeep.volume = 0;
-
-    document.getElementById("game-screen").style.display = "none";
-    document.getElementById("title-screen").style.display = "block";
-    document.getElementById("volume-area").style.display = "block";
+    totalTyped = 0;
+    missCount = 0;
+    missVowel = 0;
+    missConsonant = 0;
+    missYouon = 0;
 
     updateHUD();
-  }
 
+    kiPower = 0;
+    const ball = document.getElementById("ki-ball");
+    ball.classList.remove("white", "gold", "pulse");
+    ball.classList.add("blue");
+    ball.style.transform = "translate(-50%, -50%) scale(0.02)";
 
+    selectedCourse = localStorage.getItem("selectedCourse");
 
-// ======================================================
-// 📝 名前入力（完全版）
-// ======================================================
-
-// 「決定」ボタンを押したら validateName() を実行
-document.getElementById("name-submit").addEventListener("click", validateName);
-
-function validateName() {
-  const input = document.getElementById("name-input");
-  const error = document.getElementById("name-error");
-  const name = input.value.trim();
-
-  // ▼ 空欄チェック
-  if (name === "") {
-    error.textContent = "※ 名前を入力してください";
-    input.classList.add("error");
-    seBeep.currentTime = 0;
-    seBeep.play();
-    return;
-  }
-
-  // ▼ エラー解除
-  input.classList.remove("error");
-  error.textContent = "";
-
-  // ▼ 名前保存
-  localStorage.setItem("playerName", name);
-
-  // ▼ 名前入力エリアを消す
-  document.getElementById("name-area").style.display = "none";
-
-  // ▼ ★ 遊び方ボタンを表示（ここが重要）
-  document.getElementById("howto-area").style.display = "block";
-
-  // ▼ ★ コース選択はまだ表示しない
-  document.getElementById("course-buttons").style.display = "none";
-
-  // ▼ ★ 遊び方ページへ行ったかどうかのフラグをリセット
-  localStorage.removeItem("visitedHowTo");
-}
-
-  // ======================================================
-  // 📚 コース選択
-  // ======================================================
-document.querySelectorAll(".course-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    selectedCourse = btn.dataset.course;
-    startGame();
-  });
-});
-
-
-
-// ======================================================
-// ▶ ゲーム開始
-// ======================================================
-function startGame() {
-  state = "loading";
-
-  // ★ 遊び方ページで選んだ BGM ON/OFF を反映
-  const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-  if (!bgmEnabled) {
-    bgm.volume = 0;
-    volumeSlider.value = 0;
-  }
-
-  document.getElementById("title-screen").style.display = "none";
-  document.getElementById("game-screen").style.display = "block";
-  document.getElementById("volume-area").style.display = "none";
-
-  // ▼ 名前から性別判定 → キャラ・背景・気弾切替
-  const playerName = localStorage.getItem("playerName") || "";
-  const character = document.getElementById("character");
-  const kiBall = document.getElementById("ki-ball");
-  const bgLayer = document.getElementById("bg-layer-game");
-
-  fetch("employee_list.csv")
-    .then(res => res.text())
-    .then(text => {
-      const lines = text.trim().split("\n").slice(1);
-      let gender = "male";
-
-      for (const line of lines) {
-        const [name, g] = line.split(",").map(s => s.trim());
-        if (name === playerName) {
-          gender = g;
-          break;
-        }
-      }
-
-      localStorage.setItem("gender", gender);
-
-      // ▼ キャラ画像
-      if (gender === "female") {
-        character.src = "images/character/women/kiball_woman.png";
-        document.body.classList.add("pink-theme");
-      } else {
-        character.src = "images/character/men/kiball_man.png";
-        document.body.classList.remove("pink-theme");
-      }
-
-      // ▼ 背景
-      bgLayer.style.backgroundImage =
-        gender === "female"
-          ? 'url("images/bg/game_bg_woman.png")'
-          : 'url("images/bg/game_bg_man.png")';
-
-      // ▼ 気弾
-      kiBall.style.backgroundImage =
-        gender === "female"
-          ? 'url("images/kiball/pink.png")'
-          : 'url("images/kiball/blue.png")';
-    });
-
-  // ▼ ステータス初期化
-  score = 0;
-  combo = 0;
-  maxCombo = 0;
-  timeLeft = 60;
-
-  totalTyped = 0;
-  missCount = 0;
-  missVowel = 0;
-  missConsonant = 0;
-  missYouon = 0;
-
-  updateHUD();
-
-  // ▼ 気弾初期化
-  kiPower = 0;
-  const ball = document.getElementById("ki-ball");
-  ball.classList.remove("white", "gold", "pulse");
-  ball.classList.add("blue");
-  ball.style.transform = "translate(-50%, -50%) scale(0.02)";
-
-  // ▼ タイマー開始 & CSV 読み込み
-  startTimer();
-  loadCSV(selectedCourse);
-}
+    startTimer();
+    loadCSV(selectedCourse);
+  };
 
   // ======================================================
   // ⏱ タイマー
@@ -295,8 +204,6 @@ function startGame() {
     }, 1000);
   }
 
-
-
   // ======================================================
   // HUD 更新
   // ======================================================
@@ -306,10 +213,8 @@ function startGame() {
     document.getElementById("hud-time").textContent = timeLeft;
   }
 
-
-
   // ======================================================
-  // 📄 CSV 読み込み
+  // CSV 読み込み
   // ======================================================
   function loadCSV(course) {
     fetch(`words_${course}.csv`)
@@ -321,10 +226,8 @@ function startGame() {
       });
   }
 
-
-
   // ======================================================
-  // 次のお題へ
+  // 次のお題
   // ======================================================
   function nextWord() {
     if (timeLeft <= 0) return;
@@ -342,10 +245,8 @@ function startGame() {
     state = "playing";
   }
 
-
-
   // ======================================================
-  // ⌨ キー入力処理
+  // キー入力
   // ======================================================
   document.addEventListener("keydown", e => {
     if (state !== "playing") return;
@@ -361,7 +262,6 @@ function startGame() {
 
     if (!target) return;
 
-    // ▼ 正解
     if (key === target) {
       seHit.currentTime = 0;
       seHit.play();
@@ -396,7 +296,6 @@ function startGame() {
       }
 
     } else {
-      // ▼ ミス
       seBeep.currentTime = 0;
       seBeep.play();
 
@@ -411,10 +310,8 @@ function startGame() {
     }
   });
 
-
-
   // ======================================================
-  // ⌨ キーボード光演出
+  // キーボード光演出
   // ======================================================
   function highlightKey(key) {
     const upper = key.toUpperCase();
@@ -427,10 +324,8 @@ function startGame() {
     setTimeout(() => keyEl.classList.remove("active"), 150);
   }
 
-
-
   // ======================================================
-  // 🔵 気弾成長
+  // 気弾成長
   // ======================================================
   let kiPower = 0;
 
@@ -448,10 +343,8 @@ function startGame() {
     updateKiBall();
   }
 
-
-
   // ======================================================
-  // 🔥 ビーム演出
+  // ビーム演出
   // ======================================================
   function fireBeam() {
     const beam = document.getElementById("beam");
@@ -459,10 +352,8 @@ function startGame() {
     setTimeout(() => beam.classList.remove("beam-fire"), 500);
   }
 
-
-
   // ======================================================
-  // 👾 敵撃破ロジック
+  // 敵撃破ロジック
   // ======================================================
   function getDefeatedEnemy(score) {
     if (score <= 10000) return "サイバイマン";
@@ -478,10 +369,8 @@ function startGame() {
     return "破壊神クラス撃破";
   }
 
-
-
   // ======================================================
-  // 🧠 弱点分析コメント
+  // 弱点分析コメント
   // ======================================================
   function getWeaknessComment(accuracy, v, c, y) {
     if (accuracy >= 95) return "お前…強くなったな。もう上級者の領域だぞ。";
@@ -494,10 +383,8 @@ function startGame() {
     return "子音の切り替えが遅いな…もっとリズムを意識しろ！";
   }
 
-
-
   // ======================================================
-  // 💾 Supabase 保存
+  // Supabase 保存
   // ======================================================
   async function saveScoreToSupabase(data) {
     try {
@@ -508,10 +395,8 @@ function startGame() {
     }
   }
 
-
-
   // ======================================================
-  // 🏁 ゲーム終了処理
+  // ゲーム終了
   // ======================================================
   function endGame() {
     state = "end";

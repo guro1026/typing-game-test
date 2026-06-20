@@ -32,6 +32,17 @@
     font-size: 22px;
   }
 
+  .course-btn {
+    margin: 10px;
+    padding: 15px 30px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: 2px solid #fff;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    cursor: pointer;
+  }
+
   #start-msg {
     margin-top: 40px;
     font-size: 26px;
@@ -59,12 +70,22 @@
     <button id="bgm-off">BGMなし</button>
   </div>
 
+  <div class="box">
+    <strong>コース選択</strong><br><br>
+    <button class="course-btn" data-course="easy">EASY</button>
+    <button class="course-btn" data-course="business">BUSINESS</button>
+    <button class="course-btn" data-course="it">IT</button>
+    <button class="course-btn" data-course="mail">MAIL</button>
+  </div>
+
   <div id="start-msg">スペースキーでゲーム開始</div>
 </div>
 
 <script>
   let bgmEnabled = true;
+  let selectedCourse = null;
 
+  // BGM設定
   document.getElementById("bgm-on").addEventListener("click", () => {
     bgmEnabled = true;
     localStorage.setItem("bgmEnabled", "1");
@@ -75,15 +96,19 @@
     localStorage.setItem("bgmEnabled", "0");
   });
 
-  // ▼ スペースでゲーム開始
+  // コース選択
+  document.querySelectorAll(".course-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      selectedCourse = btn.dataset.course;
+      localStorage.setItem("selectedCourse", selectedCourse);
+    });
+  });
+
+  // スペースでゲーム開始
   document.addEventListener("keydown", e => {
-    if (e.code === "Space") {
-
-      // 裏モード使うなら残す、不要なら削除OK
-      localStorage.setItem("keepitreal", "1");
-
-      // index.html に戻ってコース選択 → ゲーム開始
-      location.href = "index.html";
+    if (e.code === "Space" && selectedCourse) {
+      // index.html に戻ってゲーム開始
+      location.href = "index.html?start=1";
     }
   });
 </script>

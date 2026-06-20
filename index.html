@@ -9,7 +9,7 @@
 <body>
 
   <!-- ============================
-       タイトル画面
+       タイトル画面（名前入力だけ）
   ============================ -->
   <div id="title-screen">
 
@@ -28,20 +28,7 @@
       <button id="name-submit">決定</button>
     </div>
 
-    <!-- 遊び方（名前入力後に表示） -->
-    <div id="howto-area" style="display:none;">
-      <button id="howto-btn" onclick="goHowTo()">遊び方</button>
-    </div>
-
-    <!-- コース選択（遊び方後に表示） -->
-    <div id="course-buttons" style="display:none;">
-      <button class="course-btn" data-course="easy">EASY</button>
-      <button class="course-btn" data-course="business">BUSINESS</button>
-      <button class="course-btn" data-course="it">IT</button>
-      <button class="course-btn" data-course="mail">MAIL</button>
-    </div>
-
-    <!-- 音量スライダー -->
+    <!-- 音量スライダー（タイトル用） -->
     <div id="volume-area">
       <div id="volume-label">BGM</div>
       <input id="volume-slider" type="range" min="0" max="100" value="0">
@@ -50,7 +37,7 @@
   </div>
 
   <!-- ============================
-       ゲーム画面
+       ゲーム画面（startGame() が表示）
   ============================ -->
   <div id="game-screen" style="display:none;">
     <div id="bg-layer-game"></div>
@@ -93,19 +80,15 @@
   <!-- ゲーム本体 -->
   <script type="module" src="game2.js"></script>
 
-  <!-- ★ 遊び方ページ制御 -->
+  <!-- ★ 新仕様：ゲーム開始トリガー -->
   <script>
-    // 遊び方へ
-    function goHowTo() {
-      localStorage.setItem("visitedHowTo", "1");
-      location.href = "play.html";
-    }
-
-    // 遊び方から戻ってきた？
     document.addEventListener("DOMContentLoaded", () => {
-      if (localStorage.getItem("visitedHowTo") === "1") {
-        document.getElementById("howto-area").style.display = "none";
-        document.getElementById("course-buttons").style.display = "block";
+      const params = new URLSearchParams(location.search);
+
+      // play.html → index.html?start=1 で戻ってきたらゲーム開始
+      if (params.get("start") === "1") {
+        const course = localStorage.getItem("selectedCourse");
+        if (course) startGame();
       }
     });
   </script>
