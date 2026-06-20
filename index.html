@@ -9,7 +9,7 @@
 <body>
 
   <!-- ============================
-       タイトル画面（名前入力だけ）
+       タイトル画面（名前入力）
   ============================ -->
   <div id="title-screen">
 
@@ -28,7 +28,7 @@
       <button id="name-submit">決定</button>
     </div>
 
-    <!-- 音量スライダー（タイトル用） -->
+    <!-- 音量スライダー -->
     <div id="volume-area">
       <div id="volume-label">BGM</div>
       <input id="volume-slider" type="range" min="0" max="100" value="0">
@@ -77,21 +77,47 @@
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- ゲーム本体 -->
-  <script type="module" src="game2.js"></script>
+  <!-- ゲーム本体（※ module を絶対に付けない） -->
+  <script src="game2.js"></script>
 
-  <!-- ★ 新仕様：ゲーム開始トリガー -->
+  <!-- ============================
+       名前入力 → play.html へ遷移
+  ============================ -->
+  <script>
+    document.getElementById("name-submit").addEventListener("click", () => {
+      const input = document.getElementById("name-input");
+      const error = document.getElementById("name-error");
+      const name = input.value.trim();
+
+      if (name === "") {
+        error.textContent = "※ 名前を入力してください";
+        input.classList.add("error");
+        return;
+      }
+
+      error.textContent = "";
+      input.classList.remove("error");
+
+      // 名前保存
+      localStorage.setItem("playerName", name);
+
+      // play.html へ移動
+      location.href = "play.html";
+    });
+  </script>
+
+  <!-- ============================
+       play.html → index.html?start=1 で戻ってきたらゲーム開始
+  ============================ -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(location.search);
 
-      // play.html → index.html?start=1 で戻ってきたらゲーム開始
       if (params.get("start") === "1") {
         const course = localStorage.getItem("selectedCourse");
         if (course) startGame();
       }
     });
-    
   </script>
 
 </body>
