@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>遊び方 - Typing Game</title>
+  <title>設定 - Typing Game</title>
 
   <style>
     body {
@@ -108,20 +108,20 @@
 
   <div id="play-screen">
 
-    <h1>遊び方</h1>
-
-    <div>
-      ・画面に表示されるローマ字をタイプして敵を倒せ！<br>
-      ・コンボをつなげると気弾が成長！<br>
-      ・10 / 15 / 20 コンボで奥義を発動！<br>
-      ・60秒以内にどれだけ倒せるかが勝負！
-    </div>
+    <h1>設定</h1>
 
     <!-- BGM設定 -->
     <div class="section-title">BGM設定</div>
     <div class="btn-area">
       <button class="bgm-btn" data-mode="on">BGMあり</button>
       <button class="bgm-btn" data-mode="off">BGMなし</button>
+    </div>
+
+    <!-- SE設定 -->
+    <div class="section-title">SE設定</div>
+    <div class="btn-area">
+      <button class="se-btn" data-mode="on">SEあり</button>
+      <button class="se-btn" data-mode="off">SEなし</button>
     </div>
 
     <!-- 音量 -->
@@ -153,12 +153,10 @@
 
       // 強制リセット
       localStorage.setItem("bgmEnabled", "0");
+      localStorage.setItem("seEnabled", "1"); // デフォルトSEあり
       localStorage.setItem("volume", "0");
 
-      // スライダー初期値
       volSlider.value = 0;
-
-      // BGM停止
       bgm.volume = 0;
       bgm.pause();
 
@@ -186,7 +184,7 @@
     });
 
     /* ============================================================
-       BGMあり/なし（ユーザー操作なので play() OK）
+       BGMあり/なし
        ============================================================ */
     document.querySelectorAll(".bgm-btn").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -203,11 +201,26 @@
           const v = localStorage.getItem("volume") || 0;
           bgm.volume = v / 100;
 
-          bgm.play();   // ← ユーザー操作なので自動再生規制に引っかからない
+          bgm.play();   // ← ユーザー操作なのでOK
         } else {
           localStorage.setItem("bgmEnabled", "0");
           bgm.pause();
         }
+      });
+    });
+
+    /* ============================================================
+       SEあり/なし
+       ============================================================ */
+    document.querySelectorAll(".se-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+
+        document.querySelectorAll(".se-btn")
+          .forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const mode = btn.dataset.mode;
+        localStorage.setItem("seEnabled", mode === "on" ? "1" : "0");
       });
     });
 
@@ -231,25 +244,6 @@
       location.href = "countdown.html";
     });
 
-    /* ============================================================
-       スペースでも開始（任意）
-       ============================================================ */
-    document.addEventListener("keydown", e => {
-      if (e.code === "Space") {
-        bgm.pause();
-        location.href = "countdown.html";
-      }
-    });
-
-    /* ============================================================
-       ESCでタイトルへ
-       ============================================================ */
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") {
-        bgm.pause();
-        location.href = "index.html";
-      }
-    });
   </script>
 
 </body>

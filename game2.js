@@ -1,12 +1,8 @@
 // ======================================================
-// 🔊 グローバル初期化
+// 🔊 効果音（SE）
 // ======================================================
-let bgm = new Audio("sounds/bgm.mp3");
 let seHit = new Audio("sounds/hit.mp3");
 let seBeep = new Audio("sounds/beep.mp3");
-
-bgm.loop = true;
-bgm.volume = 0;
 
 // ======================================================
 // 🟦 グローバル変数
@@ -46,24 +42,17 @@ function updateHUD() {
 }
 
 // ======================================================
-// ▶ ゲーム開始（countdown.html → index.html?start=1）
+// ▶ ゲーム開始（countdown → index?start=1）
 // ======================================================
 window.startGame = function () {
 
   state = "loading";
 
-  // ▼ BGM設定（再生はしない：自動再生規制対策）
-  const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-  const savedVol = localStorage.getItem("volume") || 0;
-  bgm.volume = bgmEnabled ? (savedVol / 100) : 0;
-
-  // ★bgm.play() は絶対に呼ばない（自動再生エラー対策）
-
-  // ▼ 画面切り替え
+  // 画面切り替え
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
 
-  // ▼ 性別によるキャラ切り替え
+  // 性別によるキャラ切り替え
   const playerName = localStorage.getItem("playerName") || "";
   const character = document.getElementById("character");
   const kiBall = document.getElementById("ki-ball");
@@ -104,7 +93,7 @@ window.startGame = function () {
           : 'url("images/kiball/blue.png")';
     });
 
-  // ▼ ステータス初期化
+  // ステータス初期化
   score = 0;
   combo = 0;
   maxCombo = 0;
@@ -118,15 +107,15 @@ window.startGame = function () {
 
   updateHUD();
 
-  // ▼ 気弾初期化
+  // 気弾初期化
   kiPower = 0;
   kiBall.style.opacity = "1";
   kiBall.style.transform = "translate(-50%, -50%) scale(0.02)";
 
-  // ▼ コース取得
+  // コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
-  // ▼ CSV 読み込み完了後にゲーム開始
+  // CSV 読み込み後に開始
   loadCSV(selectedCourse).then(() => {
     startTimer();
     nextWord();
@@ -143,7 +132,7 @@ function startTimer() {
     timeLeft--;
     updateHUD();
 
-    // 57秒でかめはめ波
+    // ★残り3秒でかめはめ波
     if (timeLeft === 3) {
       fireKamehameha();
     }
@@ -156,7 +145,7 @@ function startTimer() {
 }
 
 // ======================================================
-// CSV 読み込み（Promise）
+// CSV 読み込み
 // ======================================================
 function loadCSV(course) {
   return fetch(`words_${course}.csv`)
@@ -204,9 +193,14 @@ document.addEventListener("keydown", e => {
 
   if (!target) return;
 
+  const seEnabled = localStorage.getItem("seEnabled") === "1";
+
   if (key === target) {
-    seHit.currentTime = 0;
-    seHit.play();
+
+    if (seEnabled) {
+      seHit.currentTime = 0;
+      seHit.play();
+    }
 
     currentRomaji = currentRomaji.slice(1);
     document.getElementById("word-romaji").textContent = currentRomaji;
@@ -238,8 +232,11 @@ document.addEventListener("keydown", e => {
     }
 
   } else {
-    seBeep.currentTime = 0;
-    seBeep.play();
+
+    if (seEnabled) {
+      seBeep.currentTime = 0;
+      seBeep.play();
+    }
 
     missCount++;
 
@@ -284,43 +281,58 @@ function growKi() {
 }
 
 // ======================================================
-// 57秒時のかめはめ波演出
+// かめはめ波（テンプレート方式）
 // ======================================================
 function fireKamehameha() {
   const character = document.getElementById("character");
-  const kiBall = document.getElementById("ki-ball");
   const gender = localStorage.getItem("gender");
 
+  // キャラ画像切り替え
   if (gender === "female") {
     character.src = "images/character/women/kamehameha_woman.png";
   } else {
     character.src = "images/character/men/kamehameha_man.png";
   }
 
-  kiBall.style.transition = "opacity 0.8s ease-out, transform 0.8s ease-out";
-  kiBall.style.opacity = "0";
-  kiBall.style.transform = "translate(-50%, -50%) scale(1.5)";
+  // 気弾フェード
+  fadeKiBall();
 
-  const fire = document.createElement("img");
-  fire.id = "kame-fire";
-  fire.style.position = "absolute";
-  fire.style.left = "50%";
-  fire.style.top = "50%";
-  fire.style.transform = "translate(-50%, -50%)";
-  fire.style.width = "600px";
-  fire.style.pointerEvents = "none";
+  // かめはめ波テンプレート
+  const tpl = document.getElementById("kame-template");
+  const fire = tpl.content.firstElementChild.cloneNode(true);
 
-  if (gender === "female") {
-    fire.src = "images/character/women/fire_woman.png";
-  } else {
-    fire.src = "images/character/men/fire_man.png";
-  }
+  fire.src = gender === "female"
+    ? "images/character/women/fire_woman.png"
+    : "images/character/men/fire_man.png";
 
   document.body.appendChild(fire);
 
+  setTimeout(() => fire.style.opacity = 0, 50);
+  setTimeout(() => fire.remove(), 900);
+}
+
+// ======================================================
+// 気弾フェード（テンプレート方式）
+// ======================================================
+function fadeKiBall() {
+  const tpl = document.getElementById("kiball-fade-template");
+  const fade = tpl.content.firstElementChild.cloneNode(true);
+
+  const gender = localStorage.getItem("gender");
+
+  fade.style.backgroundImage =
+    gender === "female"
+      ? 'url("images/kiball/pink.png")'
+      : 'url("images/kiball/blue.png")';
+
+  document.body.appendChild(fade);
+
   setTimeout(() => {
-    fire.remove();
-  }, 1000);
+    fade.style.opacity = 0;
+    fade.style.transform = "translate(-50%, -50%) scale(1.5)";
+  }, 50);
+
+  setTimeout(() => fade.remove(), 900);
 }
 
 // ======================================================
@@ -376,4 +388,28 @@ async function saveScoreToSupabase(data) {
 }
 
 // ======================================================
-// ゲ
+// ゲーム終了
+// ======================================================
+function endGame() {
+  const accuracy = totalTyped === 0 ? 0 : Math.floor(((totalTyped - missCount) / totalTyped) * 100);
+
+  const defeated = getDefeatedEnemy(score);
+  const weakness = getWeaknessComment(accuracy, missVowel, missConsonant, missYouon);
+
+  const data = {
+    name: localStorage.getItem("playerName"),
+    course: selectedCourse,
+    score,
+    combo: maxCombo,
+    accuracy,
+    defeated,
+    weakness,
+    created_at: new Date().toISOString()
+  };
+
+  saveScoreToSupabase(data);
+
+  localStorage.setItem("lastScore", JSON.stringify(data));
+
+  location.href = "result.html";
+}
