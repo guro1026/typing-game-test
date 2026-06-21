@@ -34,6 +34,8 @@
        ゲーム画面
   ============================ -->
   <div id="game-screen" style="display:none;">
+
+    <!-- ★game2.js が必ず参照する背景レイヤー -->
     <div id="bg-layer-game"></div>
 
     <div id="word-jp"></div>
@@ -66,6 +68,7 @@
         <div class="key">B</div><div class="key">N</div><div class="key">M</div>
       </div>
     </div>
+
   </div>
 
   <!-- Supabase -->
@@ -76,6 +79,7 @@
 
   <!-- 名前入力処理 -->
   <script>
+    // 名前決定 → play.html へ
     document.getElementById("name-submit").addEventListener("click", () => {
       const input = document.getElementById("name-input");
       const error = document.getElementById("name-error");
@@ -95,12 +99,16 @@
       location.href = "play.html";
     });
 
-    // play.html → countdown.html → index.html?start=1
+    // countdown.html → index.html?start=1 → ゲーム開始
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(location.search);
+
       if (params.get("start") === "1") {
         const course = localStorage.getItem("selectedCourse");
-        if (course) startGame();
+
+        if (course) {
+          startGame();  // ← game2.js の関数
+        }
       }
     });
   </script>

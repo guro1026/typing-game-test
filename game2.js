@@ -34,7 +34,6 @@ let missYouon = 0;
 
 let kiPower = 0;
 
-let volumeSlider;
 let client = null;
 
 // ======================================================
@@ -53,16 +52,16 @@ window.startGame = function () {
 
   state = "loading";
 
-  // ▼ BGM ON/OFF
+  // ▼ BGM設定（再生はしない：自動再生規制対策）
   const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-  const savedVol = localStorage.getItem("volume") || 50;
+  const savedVol = localStorage.getItem("volume") || 0;
   bgm.volume = bgmEnabled ? (savedVol / 100) : 0;
-  if (bgmEnabled) bgm.play();
+
+  // ★bgm.play() は絶対に呼ばない（自動再生エラー対策）
 
   // ▼ 画面切り替え
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
-  document.getElementById("volume-area").style.display = "none";
 
   // ▼ 性別によるキャラ切り替え
   const playerName = localStorage.getItem("playerName") || "";
@@ -88,18 +87,16 @@ window.startGame = function () {
 
       if (gender === "female") {
         character.src = "images/character/women/kiball_woman.png";
-        document.body.classList.add("pink-theme");
-      } else if (gender === "male") {
-        character.src = "images/character/men/kiball_man.png";
-        document.body.classList.remove("pink-theme");
       } else {
         character.src = "images/character/men/kiball_man.png";
       }
 
-      bgLayer.style.backgroundImage =
-        gender === "female"
-          ? 'url("images/bg/game_bg_woman.png")'
-          : 'url("images/bg/game_bg_man.png")';
+      if (bgLayer) {
+        bgLayer.style.backgroundImage =
+          gender === "female"
+            ? 'url("images/bg/game_bg_woman.png")'
+            : 'url("images/bg/game_bg_man.png")';
+      }
 
       kiBall.style.backgroundImage =
         gender === "female"
@@ -123,11 +120,8 @@ window.startGame = function () {
 
   // ▼ 気弾初期化
   kiPower = 0;
-  const ball = document.getElementById("ki-ball");
-  ball.classList.remove("white", "gold", "pulse");
-  ball.classList.add("blue");
-  ball.style.opacity = "1";
-  ball.style.transform = "translate(-50%, -50%) scale(0.02)";
+  kiBall.style.opacity = "1";
+  kiBall.style.transform = "translate(-50%, -50%) scale(0.02)";
 
   // ▼ コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
@@ -149,7 +143,7 @@ function startTimer() {
     timeLeft--;
     updateHUD();
 
-    // 57秒になった瞬間にかめはめ波発射
+    // 57秒でかめはめ波
     if (timeLeft === 57) {
       fireKamehameha();
     }
@@ -382,111 +376,4 @@ async function saveScoreToSupabase(data) {
 }
 
 // ======================================================
-// ゲーム終了
-// ======================================================
-function endGame() {
-  state = "end";
-
-  kiPower = 100;
-  updateKiBall();
-
-  document.body.classList.add("flash");
-  setTimeout(() => document.body.classList.remove("flash"), 300);
-
-  fireBeam();
-
-  const accuracy =
-    totalTyped > 0
-      ? Math.floor(((totalTyped - missCount) / totalTyped) * 100)
-      : 0;
-
-  const defeatedEnemy = getDefeatedEnemy(score);
-  const weaknessComment = getWeaknessComment(
-    accuracy,
-    missVowel,
-    missConsonant,
-    missYouon
-  );
-
-  const playerName = localStorage.getItem("playerName") || "名無し";
-
-  localStorage.setItem("score", score);
-  localStorage.setItem("maxCombo", maxCombo);
-  localStorage.setItem("accuracy", accuracy);
-  localStorage.setItem("totalTyped", totalTyped);
-  localStorage.setItem("missCount", missCount);
-  localStorage.setItem("defeatedEnemy", defeatedEnemy);
-  localStorage.setItem("weaknessComment", weaknessComment);
-
-  saveScoreToSupabase({
-    name: playerName,
-    score: score,
-    max_combo: maxCombo,
-    accuracy: accuracy,
-    total_typed: totalTyped,
-    miss_count: missCount,
-    defeated_enemy: defeatedEnemy,
-    created_at: new Date().toISOString()
-  });
-
-  setTimeout(() => {
-    location.href = "results.html";
-  }, 800);
-}
-
-// ======================================================
-// ESCキーでタイトルへ強制帰還
-// ======================================================
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-
-    if (timerInterval) clearInterval(timerInterval);
-
-    if (bgm) {
-      bgm.pause();
-      bgm.currentTime = 0;
-    }
-
-    score = 0;
-    combo = 0;
-    maxCombo = 0;
-    timeLeft = 60;
-
-    location.href = "index.html";
-  }
-});
-
-// ======================================================
-// DOMContentLoaded（UI 初期化）
-// ======================================================
-document.addEventListener("DOMContentLoaded", async () => {
-
-  volumeSlider = document.getElementById("volume-slider");
-
-  if (volumeSlider) {
-    const savedVol = localStorage.getItem("volume");
-    if (savedVol !== null) {
-      volumeSlider.value = savedVol;
-    }
-    volumeSlider.addEventListener("input", () => {
-      const vol = volumeSlider.value;
-      localStorage.setItem("volume", vol);
-      bgm.volume = vol / 100;
-      seHit.volume = vol / 100;
-      seBeep.volume = vol / 100;
-    });
-  }
-
-  try {
-    const res = await fetch("config.json");
-    const config = await res.json();
-    const env = config.env;
-
-    client = supabase.createClient(
-      config.supabase[env].url,
-      config.supabase[env].key
-    );
-  } catch (e) {
-    console.error("config.json 読み込みエラー:", e);
-  }
-});
+// ゲ
