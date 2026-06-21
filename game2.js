@@ -144,7 +144,7 @@ function startTimer() {
     updateHUD();
 
     // 57秒でかめはめ波
-    if (timeLeft === 57) {
+    if (timeLeft === 3) {
       fireKamehameha();
     }
 
