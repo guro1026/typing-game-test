@@ -42,7 +42,7 @@ function updateHUD() {
 }
 
 // ======================================================
-// ▶ ゲーム開始（countdown → index?start=1）
+// ▶ ゲーム開始
 // ======================================================
 window.startGame = function () {
 
@@ -287,17 +287,12 @@ function fireKamehameha() {
   const character = document.getElementById("character");
   const gender = localStorage.getItem("gender");
 
-  // キャラ画像切り替え
-  if (gender === "female") {
-    character.src = "images/character/women/kamehameha_woman.png";
-  } else {
-    character.src = "images/character/men/kamehameha_man.png";
-  }
+  character.src = gender === "female"
+    ? "images/character/women/kamehameha_woman.png"
+    : "images/character/men/kamehameha_man.png";
 
-  // 気弾フェード
   fadeKiBall();
 
-  // かめはめ波テンプレート
   const tpl = document.getElementById("kame-template");
   const fire = tpl.content.firstElementChild.cloneNode(true);
 
@@ -308,7 +303,10 @@ function fireKamehameha() {
   document.body.appendChild(fire);
 
   setTimeout(() => fire.style.opacity = 0, 50);
-  setTimeout(() => fire.remove(), 900);
+
+  setTimeout(() => {
+    if (fire && fire.parentNode) fire.remove();
+  }, 1600);
 }
 
 // ======================================================
@@ -332,7 +330,9 @@ function fadeKiBall() {
     fade.style.transform = "translate(-50%, -50%) scale(1.5)";
   }, 50);
 
-  setTimeout(() => fade.remove(), 900);
+  setTimeout(() => {
+    if (fade && fade.parentNode) fade.remove();
+  }, 1600);
 }
 
 // ======================================================
@@ -370,46 +370,4 @@ function getWeaknessComment(accuracy, v, c, y) {
   const maxMiss = Math.max(v, c, y);
 
   if (maxMiss === 0) return "まだまだ伸びしろだらけだな…修行を続けろ！";
-  if (maxMiss === y) return "拗音がまだ甘えな…“kyo”や“sha”を鍛えりゃもっと強くなれるぞ！";
-  if (maxMiss === v) return "基本の母音でつまずいてるぞ…落ち着いて指を動かせ！";
-  return "子音の切り替えが遅いな…もっとリズムを意識しろ！";
-}
-
-// ======================================================
-// Supabase 保存
-// ======================================================
-async function saveScoreToSupabase(data) {
-  try {
-    const { error } = await client.from("score_logs").insert(data);
-    if (error) console.error("Supabase 保存エラー:", error);
-  } catch (e) {
-    console.error("Supabase 通信エラー:", e);
-  }
-}
-
-// ======================================================
-// ゲーム終了
-// ======================================================
-function endGame() {
-  const accuracy = totalTyped === 0 ? 0 : Math.floor(((totalTyped - missCount) / totalTyped) * 100);
-
-  const defeated = getDefeatedEnemy(score);
-  const weakness = getWeaknessComment(accuracy, missVowel, missConsonant, missYouon);
-
-  const data = {
-    name: localStorage.getItem("playerName"),
-    course: selectedCourse,
-    score,
-    combo: maxCombo,
-    accuracy,
-    defeated,
-    weakness,
-    created_at: new Date().toISOString()
-  };
-
-  saveScoreToSupabase(data);
-
-  localStorage.setItem("lastScore", JSON.stringify(data));
-
-  location.href = "result.html";
-}
+  if (max
