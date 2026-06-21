@@ -54,7 +54,6 @@
     }
 
     /* 性別テーマ別の選択色 */
-
     .theme-male .selected {
       background: #00aaff !important;
       color: #000 !important;
@@ -117,7 +116,7 @@
 
     <!-- 音量 -->
     <div class="section-title">音量</div>
-    <input id="volume-slider" type="range" min="0" max="100" value="50">
+    <input id="volume-slider" type="range" min="0" max="100" value="0">
 
     <!-- コース選択 -->
     <div class="section-title">コース選択</div>
@@ -141,13 +140,10 @@
       const gender = localStorage.getItem("gender");
 
       if (gender === "female") {
-        document.body.classList.remove("theme-male", "theme-unknown");
         document.body.classList.add("theme-female");
       } else if (gender === "male") {
-        document.body.classList.remove("theme-female", "theme-unknown");
         document.body.classList.add("theme-male");
       } else {
-        document.body.classList.remove("theme-male", "theme-female");
         document.body.classList.add("theme-unknown");
       }
 
@@ -194,7 +190,7 @@
         localStorage.setItem("bgmEnabled", mode === "on" ? "1" : "0");
 
         if (mode === "on") {
-          const v = localStorage.getItem("volume") || 50;
+          const v = localStorage.getItem("volume") || 0;
           bgm.volume = v / 100;
           bgm.play();
         } else {

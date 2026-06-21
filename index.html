@@ -28,12 +28,6 @@
       <button id="name-submit">決定</button>
     </div>
 
-    <!-- 音量スライダー（全体共有） -->
-    <div id="volume-area">
-      <div id="volume-label">BGM音量</div>
-      <input id="volume-slider" type="range" min="0" max="100" value="50">
-    </div>
-
   </div>
 
   <!-- ============================
@@ -101,18 +95,8 @@
       location.href = "play.html";
     });
 
-    // 音量スライダー初期値を localStorage から復元
+    // play.html → countdown.html → index.html?start=1
     document.addEventListener("DOMContentLoaded", () => {
-      const slider = document.getElementById("volume-slider");
-      const savedVol = localStorage.getItem("volume");
-      if (savedVol !== null) {
-        slider.value = savedVol;
-      }
-      slider.addEventListener("input", () => {
-        localStorage.setItem("volume", slider.value);
-      });
-
-      // play.html / countdown.html から戻ってきて start=1 ならゲーム開始
       const params = new URLSearchParams(location.search);
       if (params.get("start") === "1") {
         const course = localStorage.getItem("selectedCourse");
