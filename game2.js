@@ -30,7 +30,10 @@ let missYouon = 0;
 
 let kiPower = 0;
 
-let client = null;
+// Supabase
+const SUPABASE_URL = "https://bznzxcllyocfairwjzzk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vEVMPFsuyISRzeX8helsHA_xO4y1m8e";
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ======================================================
 // HUD 更新
@@ -370,4 +373,48 @@ function getWeaknessComment(accuracy, v, c, y) {
   const maxMiss = Math.max(v, c, y);
 
   if (maxMiss === 0) return "まだまだ伸びしろだらけだな…修行を続けろ！";
-  if (max
+  if (maxMiss === y) return "拗音がまだ甘えな…“kyo”や“sha”を鍛えりゃもっと強くなれるぞ！";
+  if (maxMiss === v) return "基本の母音でつまずいてるぞ…落ち着いて指を動かせ！";
+  return "子音の切り替えが遅いな…もっとリズムを意識しろ！";
+}
+
+// ======================================================
+// Supabase 保存
+// ======================================================
+async function saveScoreToSupabase(data) {
+  try {
+    const { error } = await client.from("score_logs").insert(data);
+    if (error) console.error("Supabase 保存エラー:", error);
+  } catch (e) {
+    console.error("Supabase 通信エラー:", e);
+  }
+}
+
+// ======================================================
+// ゲーム終了
+// ======================================================
+function endGame() {
+  const accuracy = totalTyped === 0
+    ? 0
+    : Math.floor(((totalTyped - missCount) / totalTyped) * 100);
+
+  const defeated = getDefeatedEnemy(score);
+  const weakness = getWeaknessComment(accuracy, missVowel, missConsonant, missYouon);
+
+  const data = {
+    name: localStorage.getItem("playerName"),
+    course: selectedCourse,
+    score,
+    combo: maxCombo,
+    accuracy,
+    defeated,
+    weakness,
+    created_at: new Date().toISOString()
+  };
+
+  saveScoreToSupabase(data);
+
+  localStorage.setItem("lastScore", JSON.stringify(data));
+
+  location.href = "result.html";
+}
