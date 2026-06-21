@@ -53,11 +53,8 @@
       background: rgba(255,255,255,0.3);
     }
 
-    /* ============================
-       性別テーマ別の選択色
-       ============================ */
+    /* 性別テーマ別の選択色 */
 
-    /* 男性 → 青 */
     .theme-male .selected {
       background: #00aaff !important;
       color: #000 !important;
@@ -66,7 +63,6 @@
       transform: scale(1.1);
     }
 
-    /* 女性 → ピンク */
     .theme-female .selected {
       background: #ff66cc !important;
       color: #000 !important;
@@ -75,7 +71,6 @@
       transform: scale(1.1);
     }
 
-    /* 不明 → 黄色 */
     .theme-unknown .selected {
       background: #ffd700 !important;
       color: #000 !important;
@@ -90,11 +85,17 @@
       color: #ff0;
       text-shadow: 0 0 10px #ff0;
     }
+
+    #volume-slider {
+      width: 200px;
+    }
   </style>
 </head>
 
-<!-- 初期状態は不明（黄色） -->
 <body class="theme-unknown">
+
+  <!-- 遊び方画面専用BGM -->
+  <audio id="bgm" src="sounds/bgm.mp3" preload="auto" loop></audio>
 
   <div id="play-screen">
 
@@ -114,6 +115,10 @@
       <button class="bgm-btn" data-mode="off">BGMなし</button>
     </div>
 
+    <!-- 音量 -->
+    <div class="section-title">音量</div>
+    <input id="volume-slider" type="range" min="0" max="100" value="50">
+
     <!-- コース選択 -->
     <div class="section-title">コース選択</div>
     <div class="btn-area">
@@ -128,58 +133,10 @@
   </div>
 
   <script>
-    /* ============================================================
-       🟦 BGM ボタン選択
-       ============================================================ */
-    document.querySelectorAll(".bgm-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
+    const bgm = document.getElementById("bgm");
+    const volSlider = document.getElementById("volume-slider");
 
-        document.querySelectorAll(".bgm-btn")
-          .forEach(b => b.classList.remove("selected"));
-
-        btn.classList.add("selected");
-
-        const mode = btn.dataset.mode;
-        localStorage.setItem("bgmEnabled", mode === "on" ? "1" : "0");
-      });
-    });
-
-    /* ============================================================
-       🟦 コース選択ボタン
-       ============================================================ */
-    document.querySelectorAll(".course-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-
-        document.querySelectorAll(".course-btn")
-          .forEach(b => b.classList.remove("selected"));
-
-        btn.classList.add("selected");
-
-        localStorage.setItem("selectedCourse", btn.dataset.course);
-      });
-    });
-
-    /* ============================================================
-       🟦 スペースキーでゲーム開始
-       ============================================================ */
-    document.addEventListener("keydown", e => {
-      if (e.code === "Space") {
-        location.href = "countdown.html";
-      }
-    });
-
-    /* ============================================================
-       🟦 ESCキーでタイトルへ戻る
-       ============================================================ */
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") {
-        location.href = "index.html";
-      }
-    });
-
-    /* ============================================================
-       🟦 性別テーマを反映（male / female / unknown）
-       ============================================================ */
+    // 性別テーマ反映
     window.addEventListener("DOMContentLoaded", () => {
       const gender = localStorage.getItem("gender");
 
@@ -194,12 +151,21 @@
         document.body.classList.add("theme-unknown");
       }
 
-      // BGM 復元
-      const bgm = localStorage.getItem("bgmEnabled");
-      if (bgm === "1") {
+      // 音量復元
+      const savedVol = localStorage.getItem("volume");
+      if (savedVol !== null) {
+        volSlider.value = savedVol;
+        bgm.volume = savedVol / 100;
+      }
+
+      // BGM設定復元
+      const bgmEnabled = localStorage.getItem("bgmEnabled");
+      if (bgmEnabled === "1") {
         document.querySelector('[data-mode="on"]')?.classList.add("selected");
-      } else if (bgm === "0") {
+        bgm.play();
+      } else if (bgmEnabled === "0") {
         document.querySelector('[data-mode="off"]')?.classList.add("selected");
+        bgm.pause();
       }
 
       // コース復元
@@ -207,6 +173,59 @@
       if (course) {
         document.querySelector(`[data-course="${course}"]`)
           ?.classList.add("selected");
+      }
+    });
+
+    // 音量変更
+    volSlider.addEventListener("input", () => {
+      const v = volSlider.value;
+      localStorage.setItem("volume", v);
+      bgm.volume = v / 100;
+    });
+
+    // BGMボタン
+    document.querySelectorAll(".bgm-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".bgm-btn")
+          .forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const mode = btn.dataset.mode;
+        localStorage.setItem("bgmEnabled", mode === "on" ? "1" : "0");
+
+        if (mode === "on") {
+          const v = localStorage.getItem("volume") || 50;
+          bgm.volume = v / 100;
+          bgm.play();
+        } else {
+          bgm.pause();
+        }
+      });
+    });
+
+    // コース選択
+    document.querySelectorAll(".course-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".course-btn")
+          .forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        localStorage.setItem("selectedCourse", btn.dataset.course);
+      });
+    });
+
+    // スペースでカウントダウンへ
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") {
+        bgm.pause();
+        location.href = "countdown.html";
+      }
+    });
+
+    // ESCでタイトルへ
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        bgm.pause();
+        location.href = "index.html";
       }
     });
   </script>

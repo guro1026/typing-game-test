@@ -13,7 +13,7 @@
       padding-top: 120px;
     }
     #count {
-      font-size: 360px;
+      font-size: 120px;
       text-shadow: 0 0 20px #00eaff;
     }
   </style>
@@ -43,6 +43,14 @@
         location.href = "index.html?start=1";
       }
     }, 1000);
+
+    // ESCでタイトルへ
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        clearInterval(timer);
+        location.href = "index.html";
+      }
+    });
   </script>
 
 </body>

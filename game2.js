@@ -55,7 +55,9 @@ window.startGame = function () {
 
   // ▼ BGM ON/OFF
   const bgmEnabled = localStorage.getItem("bgmEnabled") === "1";
-  bgm.volume = bgmEnabled ? (volumeSlider?.value / 100 || 0) : 0;
+  const savedVol = localStorage.getItem("volume") || 50;
+  bgm.volume = bgmEnabled ? (savedVol / 100) : 0;
+  if (bgmEnabled) bgm.play();
 
   // ▼ 画面切り替え
   document.getElementById("title-screen").style.display = "none";
@@ -124,12 +126,13 @@ window.startGame = function () {
   const ball = document.getElementById("ki-ball");
   ball.classList.remove("white", "gold", "pulse");
   ball.classList.add("blue");
+  ball.style.opacity = "1";
   ball.style.transform = "translate(-50%, -50%) scale(0.02)";
 
   // ▼ コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
-  // ▼ CSV 読み込み完了後にゲーム開始（重要）
+  // ▼ CSV 読み込み完了後にゲーム開始
   loadCSV(selectedCourse).then(() => {
     startTimer();
     nextWord();
@@ -146,6 +149,11 @@ function startTimer() {
     timeLeft--;
     updateHUD();
 
+    // 57秒になった瞬間にかめはめ波発射
+    if (timeLeft === 57) {
+      fireKamehameha();
+    }
+
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       endGame();
@@ -154,7 +162,7 @@ function startTimer() {
 }
 
 // ======================================================
-// CSV 読み込み（Promise を返す版）
+// CSV 読み込み（Promise）
 // ======================================================
 function loadCSV(course) {
   return fetch(`words_${course}.csv`)
@@ -170,6 +178,7 @@ function loadCSV(course) {
 // ======================================================
 function nextWord() {
   if (timeLeft <= 0) return;
+  if (!words.length) return;
 
   const line = words[Math.floor(Math.random() * words.length)].trim();
   const cols = line.split(",").map(c => c.trim());
@@ -201,7 +210,6 @@ document.addEventListener("keydown", e => {
 
   if (!target) return;
 
-  // ▼ 正解
   if (key === target) {
     seHit.currentTime = 0;
     seHit.play();
@@ -236,7 +244,6 @@ document.addEventListener("keydown", e => {
     }
 
   } else {
-    // ▼ ミス
     seBeep.currentTime = 0;
     seBeep.play();
 
@@ -280,6 +287,46 @@ function growKi() {
 
   if (kiPower > 100) kiPower = 100;
   updateKiBall();
+}
+
+// ======================================================
+// 57秒時のかめはめ波演出
+// ======================================================
+function fireKamehameha() {
+  const character = document.getElementById("character");
+  const kiBall = document.getElementById("ki-ball");
+  const gender = localStorage.getItem("gender");
+
+  if (gender === "female") {
+    character.src = "images/character/women/kamehameha_woman.png";
+  } else {
+    character.src = "images/character/men/kamehameha_man.png";
+  }
+
+  kiBall.style.transition = "opacity 0.8s ease-out, transform 0.8s ease-out";
+  kiBall.style.opacity = "0";
+  kiBall.style.transform = "translate(-50%, -50%) scale(1.5)";
+
+  const fire = document.createElement("img");
+  fire.id = "kame-fire";
+  fire.style.position = "absolute";
+  fire.style.left = "50%";
+  fire.style.top = "50%";
+  fire.style.transform = "translate(-50%, -50%)";
+  fire.style.width = "600px";
+  fire.style.pointerEvents = "none";
+
+  if (gender === "female") {
+    fire.src = "images/character/women/fire_woman.png";
+  } else {
+    fire.src = "images/character/men/fire_man.png";
+  }
+
+  document.body.appendChild(fire);
+
+  setTimeout(() => {
+    fire.remove();
+  }, 1000);
 }
 
 // ======================================================
@@ -363,7 +410,6 @@ function endGame() {
 
   const playerName = localStorage.getItem("playerName") || "名無し";
 
-  // ▼ 結果を保存
   localStorage.setItem("score", score);
   localStorage.setItem("maxCombo", maxCombo);
   localStorage.setItem("accuracy", accuracy);
@@ -372,7 +418,6 @@ function endGame() {
   localStorage.setItem("defeatedEnemy", defeatedEnemy);
   localStorage.setItem("weaknessComment", weaknessComment);
 
-  // ▼ Supabase 保存
   saveScoreToSupabase({
     name: playerName,
     score: score,
@@ -384,7 +429,6 @@ function endGame() {
     created_at: new Date().toISOString()
   });
 
-  // ▼ 結果画面へ
   setTimeout(() => {
     location.href = "results.html";
   }, 800);
@@ -420,15 +464,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   volumeSlider = document.getElementById("volume-slider");
 
   if (volumeSlider) {
+    const savedVol = localStorage.getItem("volume");
+    if (savedVol !== null) {
+      volumeSlider.value = savedVol;
+    }
     volumeSlider.addEventListener("input", () => {
-      const vol = volumeSlider.value / 100;
-      bgm.volume = vol;
-      seHit.volume = vol;
-      seBeep.volume = vol;
+      const vol = volumeSlider.value;
+      localStorage.setItem("volume", vol);
+      bgm.volume = vol / 100;
+      seHit.volume = vol / 100;
+      seBeep.volume = vol / 100;
     });
   }
 
-  // ▼ Supabase 初期化
   try {
     const res = await fetch("config.json");
     const config = await res.json();
