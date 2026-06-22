@@ -23,21 +23,30 @@
 
   <div id="count">3</div>
 
-  <audio id="startSound" src="sounds/bgm.mp3" preload="auto"></audio>
+  <!-- ★ BGM を読み込まない（play.html の BGM をそのまま流すため） -->
+  <!-- ★ スタート音を使いたい場合だけ start.mp3 を置く -->
+  <!-- <audio id="startSound" src="sounds/start.mp3" preload="auto"></audio> -->
 
   <script>
     let n = 3;
     const el = document.getElementById("count");
-    const se = document.getElementById("startSound");
 
     const timer = setInterval(() => {
       n--;
 
       if (n > 0) {
         el.textContent = n;
+
       } else if (n === 0) {
         el.textContent = "START!";
-        se.play();
+
+        // スタート音がある場合だけ再生
+        const se = document.getElementById("startSound");
+        if (se) {
+          se.currentTime = 0;
+          se.play().catch(()=>{});
+        }
+
       } else {
         clearInterval(timer);
         location.href = "index.html?start=1";

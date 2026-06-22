@@ -51,11 +51,9 @@ window.startGame = function () {
 
   state = "loading";
 
-  // 画面切り替え
   document.getElementById("title-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
 
-  // 性別によるキャラ切り替え
   const playerName = localStorage.getItem("playerName") || "";
   const character = document.getElementById("character");
   const kiBall = document.getElementById("ki-ball");
@@ -96,7 +94,6 @@ window.startGame = function () {
           : 'url("images/kiball/blue.png")';
     });
 
-  // ステータス初期化
   score = 0;
   combo = 0;
   maxCombo = 0;
@@ -110,15 +107,12 @@ window.startGame = function () {
 
   updateHUD();
 
-  // 気弾初期化
   kiPower = 0;
   kiBall.style.opacity = "1";
   kiBall.style.transform = "translate(-50%, -50%) scale(0.02)";
 
-  // コース取得
   selectedCourse = localStorage.getItem("selectedCourse");
 
-  // CSV 読み込み後に開始
   loadCSV(selectedCourse).then(() => {
     startTimer();
     nextWord();
@@ -135,7 +129,6 @@ function startTimer() {
     timeLeft--;
     updateHUD();
 
-    // ★残り3秒でかめはめ波
     if (timeLeft === 3) {
       fireKamehameha();
     }
@@ -197,10 +190,12 @@ document.addEventListener("keydown", e => {
   if (!target) return;
 
   const seEnabled = localStorage.getItem("seEnabled") === "1";
+  const seVolume = (localStorage.getItem("seVolume") || 0) / 100;
 
   if (key === target) {
 
     if (seEnabled) {
+      seHit.volume = seVolume;
       seHit.currentTime = 0;
       seHit.play();
     }
@@ -237,6 +232,7 @@ document.addEventListener("keydown", e => {
   } else {
 
     if (seEnabled) {
+      seBeep.volume = seVolume;
       seBeep.currentTime = 0;
       seBeep.play();
     }
